@@ -1,10 +1,32 @@
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 
+/**
+ * Qn 1
+ * Option 1 is initialise array to hold all possible time slots then start adding in the new times
+ * from the start of the array, inserting the new time into the correct location in the array.
+ * This results in O(n) for insertion but O(1) for iterator.
+ * Option 2 is initialise array to hold all possible time slots then add in time slots into their
+ * correct indexes, resulting in a sparse array. This results in O(1) insertion and O(n) iterator
+ *
+ *
+ * */
 public class Hospital1 extends HospitalBase {
+
+    /** Array of all available timeslots */
+    private int[] times;
+
+    /** Start time of hospital */
+    private String startTime = "08:00";
+    private String stopTime = "18:00";
+    private String breakStart = "12:00";
+    private String breakEnd = "13:00";
 
     public Hospital1() {
         /* Add your code here! */
+        this.times = new int[10];
+        this.
     }
 
     @Override
@@ -13,6 +35,7 @@ public class Hospital1 extends HospitalBase {
         return false;
     }
 
+    // https://www.delftstack.com/howto/java/custom-iterator-java/
     @Override
     public Iterator<PatientBase> iterator() {
         /* Add your code here! */
@@ -20,6 +43,20 @@ public class Hospital1 extends HospitalBase {
     }
 
     /* Add any extra functions below */
+
+    /** Calculates the number of 20 min time slots available accounting for the lunch break. */
+    public int numTimeSlots() {
+        int numTimeSlots;
+
+        String startTime = "08:00"
+
+        return 1;
+    }
+
+    /** Returns true if the given time is within the hospital start and end times and doesnt fall */
+    public boolean invalidTime(String time) {
+
+    }
 
     public static void main(String[] args) {
         /*
