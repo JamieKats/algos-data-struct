@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -15,23 +14,29 @@ import java.util.Objects;
 public class Hospital1 extends HospitalBase {
 
     /** Array of all available timeslots */
-    private int[] times;
+    private Patient[] appointments;
 
     /** Start time of hospital */
     private String startTime = "08:00";
-    private String stopTime = "18:00";
+    /** 20 min time slots therefore  */
+    private String endTime = "18:00";
     private String breakStart = "12:00";
     private String breakEnd = "13:00";
+    private int numPossibleTimeSlots;
 
     public Hospital1() {
         /* Add your code here! */
-        this.times = new int[10];
-        this.
+        this.numPossibleTimeSlots = numTimeSlots();
+        this.appointments = new Patient[numPossibleTimeSlots];
+
     }
 
     @Override
     public boolean addPatient(PatientBase patient) {
         /* Add your code here! */
+        if (!validTime(patient.getTime())) {
+            return false;
+        }
         return false;
     }
 
@@ -39,24 +44,64 @@ public class Hospital1 extends HospitalBase {
     @Override
     public Iterator<PatientBase> iterator() {
         /* Add your code here! */
-        return null;
+
+        return new Iterator<PatientBase>() {
+            int currentIndex = 0;
+            @Override
+            public boolean hasNext() {
+                for (int i = currentIndex; i < numPossibleTimeSlots; i++) {
+                    if (appointments[i] instanceof Patient) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public PatientBase next() {
+                int i;
+//                int nextVal;
+                for (i = currentIndex; i < numPossibleTimeSlots; i++) {
+                    if (appointments[i] instanceof Patient) {
+//                        nextVal = i;
+                        currentIndex = i;
+                        break;
+                    }
+                }
+//                currentIndex = nextVal;
+                return appointments[i];
+            }
+        };
     }
 
     /* Add any extra functions below */
 
+    public void getPaitent0() {
+        System.out.println(appointments[0]);
+    }
+
     /** Calculates the number of 20 min time slots available accounting for the lunch break. */
     public int numTimeSlots() {
-        int numTimeSlots;
-
-        String startTime = "08:00"
-
-        return 1;
+        return (toMinuteOfDay(endTime) - toMinuteOfDay(startTime)) / 20;
     }
 
     /** Returns true if the given time is within the hospital start and end times and doesnt fall */
-    public boolean invalidTime(String time) {
+    public boolean validTime(String time) {
 
+        if ((time.compareTo(startTime) >= 0 && time.compareTo(endTime) <= 0)
+            && !(time.compareTo(breakStart) >= 0 && time.compareTo(breakEnd) < 0)) {
+            return true;
+        }
+        return false;
     }
+
+    public int toMinuteOfDay(String time) {
+        int hours = Integer.parseInt(time.split(":")[0]);
+        int mins = Integer.parseInt(time.split(":")[1]);
+        return 60 * hours + mins;
+    }
+
+
 
     public static void main(String[] args) {
         /*
@@ -66,6 +111,7 @@ public class Hospital1 extends HospitalBase {
          * The following main method is provided for simple debugging only
          */
         var hospital = new Hospital1();
+        System.out.println(hospital.numTimeSlots());
         var p1 = new Patient("Max", "11:00");
         var p2 = new Patient("Alex", "13:00");
         var p3 = new Patient("George", "14:00");
