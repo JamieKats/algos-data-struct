@@ -14,30 +14,44 @@ import java.util.Objects;
 public class Hospital1 extends HospitalBase {
 
     /** Array of all available timeslots */
-    private Patient[] appointments;
+    private PatientBase[] appointments;
 
     /** Start time of hospital */
     private String startTime = "08:00";
     /** 20 min time slots therefore  */
-    private String endTime = "18:00";
-    private String breakStart = "12:00";
+    private String endTime = "17:40";
+    private String breakStart = "11:40";
     private String breakEnd = "13:00";
     private int numPossibleTimeSlots;
+
+    private int appointmentLength = 20;
 
     public Hospital1() {
         /* Add your code here! */
         this.numPossibleTimeSlots = numTimeSlots();
+//        this.numPossibleTimeSlots = 3;
         this.appointments = new Patient[numPossibleTimeSlots];
-
+//        System.out.println(this.appointments.length);
     }
 
     @Override
     public boolean addPatient(PatientBase patient) {
         /* Add your code here! */
+        // Check time given is valid
         if (!validTime(patient.getTime())) {
             return false;
         }
-        return false;
+
+        System.out.println(patient.getName() + " goes to " + timeToIndex(patient.getTime()));
+
+        // Check if there exists a Paitent already at the index for the time specified
+        if (appointments[timeToIndex(patient.getTime())] != null) {
+            return false;
+        }
+        // Patient doesnt exist in the db
+
+        appointments[timeToIndex(patient.getTime())] = patient;
+        return true;
     }
 
     // https://www.delftstack.com/howto/java/custom-iterator-java/
@@ -50,7 +64,8 @@ public class Hospital1 extends HospitalBase {
             @Override
             public boolean hasNext() {
                 for (int i = currentIndex; i < numPossibleTimeSlots; i++) {
-                    if (appointments[i] instanceof Patient) {
+                    if (appointments[i] != null) {
+                        currentIndex = i;
                         return true;
                     }
                 }
@@ -59,30 +74,36 @@ public class Hospital1 extends HospitalBase {
 
             @Override
             public PatientBase next() {
-                int i;
+//                int i;
 //                int nextVal;
-                for (i = currentIndex; i < numPossibleTimeSlots; i++) {
-                    if (appointments[i] instanceof Patient) {
+                for (int i = currentIndex; i < numPossibleTimeSlots; i++) {
+                    if (appointments[i] != null) {
 //                        nextVal = i;
-                        currentIndex = i;
-                        break;
+                        currentIndex = i + 1;
+                        return appointments[i];
                     }
                 }
 //                currentIndex = nextVal;
-                return appointments[i];
+//                return appointments[i];
+                return null;
             }
         };
     }
 
     /* Add any extra functions below */
 
-    public void getPaitent0() {
-        System.out.println(appointments[0]);
-    }
+//    public void getPaitent0() {
+//        System.out.println(appointments[0]);
+//    }
 
     /** Calculates the number of 20 min time slots available accounting for the lunch break. */
     public int numTimeSlots() {
-        return (toMinuteOfDay(endTime) - toMinuteOfDay(startTime)) / 20;
+        return 1 + (toMinuteOfDay(endTime) - toMinuteOfDay(startTime)) / appointmentLength;
+    }
+
+    /** Converts a time string to an index */
+    public int timeToIndex(String time) {
+        return (toMinuteOfDay(time) - toMinuteOfDay(startTime)) / appointmentLength;
     }
 
     /** Returns true if the given time is within the hospital start and end times and doesnt fall */
@@ -111,16 +132,24 @@ public class Hospital1 extends HospitalBase {
          * The following main method is provided for simple debugging only
          */
         var hospital = new Hospital1();
-        System.out.println(hospital.numTimeSlots());
-        var p1 = new Patient("Max", "11:00");
+//        System.out.println("num time slots: " + hospital.numTimeSlots());
+//        System.out.println(hospital.appointments[0] == null);
+//        var time = "18:00";
+//        System.out.println(time + "=" + hospital.timeToIndex(time));
+        var p1 = new Patient("Max", "08:00");
         var p2 = new Patient("Alex", "13:00");
-        var p3 = new Patient("George", "14:00");
+        var p3 = new Patient("George", "17:40");
         hospital.addPatient(p1);
         hospital.addPatient(p2);
         hospital.addPatient(p3);
         var patients = new Patient[] { p1, p2, p3 };
         int i = 0;
+//        System.out.println(hospital.appointments.length);
+//        for (var patient : patients) {
+//            System.out.println(patient);
+//        }
         for (var patient : hospital) {
+            System.out.println(patient);
             if (!Objects.equals(patient, patients[i++])) {
                 System.err.println("Wrong patient encountered, check your implementation!");
             }
