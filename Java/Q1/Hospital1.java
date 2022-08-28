@@ -9,7 +9,8 @@ import java.util.Objects;
  * Option 2 is initialise array to hold all possible time slots then add in time slots into their
  * correct indexes, resulting in a sparse array. This results in O(1) insertion and O(n) iterator
  *
- *
+ * Can we use.
+ * Integer.parseInt, array.length, string.equals()?
  * */
 public class Hospital1 extends HospitalBase {
 
@@ -38,7 +39,7 @@ public class Hospital1 extends HospitalBase {
     public boolean addPatient(PatientBase patient) {
         /* Add your code here! */
         // Check time given is valid
-        if (!validTime(patient.getTime())) {
+        if (!Patient.validTime(startTime, endTime, breakStart, breakEnd, patient.getTime())) {
             return false;
         }
 
@@ -106,16 +107,6 @@ public class Hospital1 extends HospitalBase {
         return (toMinuteOfDay(time) - toMinuteOfDay(startTime)) / appointmentLength;
     }
 
-    /** Returns true if the given time is within the hospital start and end times and doesnt fall */
-    public boolean validTime(String time) {
-
-        if ((time.compareTo(startTime) >= 0 && time.compareTo(endTime) <= 0)
-            && !(time.compareTo(breakStart) >= 0 && time.compareTo(breakEnd) < 0)) {
-            return true;
-        }
-        return false;
-    }
-
     public int toMinuteOfDay(String time) {
         int hours = Integer.parseInt(time.split(":")[0]);
         int mins = Integer.parseInt(time.split(":")[1]);
@@ -144,6 +135,10 @@ public class Hospital1 extends HospitalBase {
         hospital.addPatient(p3);
         var patients = new Patient[] { p1, p2, p3 };
         int i = 0;
+        String time1 = "08:00";
+        String time2 = "08:01";
+        System.out.println(String.format("%s : %s = %d", time1, time2, Patient.compareTimes(time1
+                , time2)));
 //        System.out.println(hospital.appointments.length);
 //        for (var patient : patients) {
 //            System.out.println(patient);
