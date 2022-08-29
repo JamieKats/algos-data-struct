@@ -37,6 +37,7 @@ public class Hospital2 extends HospitalBase {
         // until you find a value to the left that is <= the one you inserted.
         // Step 1 Add patient to end of array, assume array is correct size
 
+        // Check valid time
         if (!Patient.validTime(startTime, endTime, breakStart, breakEnd, patient.getTime())) {
             return false;
         }
