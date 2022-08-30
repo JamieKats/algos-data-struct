@@ -11,7 +11,7 @@ public class Hospital2 extends HospitalBase {
     private String breakStart = "11:59";
     private String breakEnd = "13:00";
 
-    private final int initialArraySize = 2;
+    private final int initialArraySize = 1;
 
     private int growthMultiplier;
 
@@ -83,7 +83,7 @@ public class Hospital2 extends HospitalBase {
     /** Increase array size by doubling strategy to achieve O(1) amortised array growth */
     public void growArrayDoubleStrategy() {
         int oldAppointmentsSize = this.appointmentsSize;
-        this.appointmentsSize += Math.pow(2, this.growthMultiplier++);
+        this.appointmentsSize = this.appointmentsSize * 2;
         PatientBase[] newArray = new PatientBase[this.appointmentsSize];
 
         // Copy old array values into temp new array

@@ -11,7 +11,7 @@ public class Hospital3 extends HospitalBase {
     private String breakStart = "11:59";
     private String breakEnd = "13:00";
 
-    private final int initialArraySize = 2;
+    private final int initialArraySize = 1;
 
     private int growthMultiplier;
 
@@ -49,7 +49,7 @@ public class Hospital3 extends HospitalBase {
     /** Increase array size by doubling strategy to achieve O(1) amortised array growth */
     public void growArrayDoubleStrategy() {
         int oldAppointmentsSize = this.appointmentsSize;
-        this.appointmentsSize += Math.pow(2, this.growthMultiplier++);
+        this.appointmentsSize = this.appointmentsSize * 2;
         PatientBase[] newArray = new PatientBase[this.appointmentsSize];
 
         // Copy old array values into temp new array
@@ -67,16 +67,34 @@ public class Hospital3 extends HospitalBase {
     }
 
     public void decimalRadixSort(PatientBase[] appointments) {
+//        PatientBase[] appointments = this.appointments;
         // Create key value list (0, x)
-
+        BucketSortTuple[] bucketSortTuples = new BucketSortTuple[appointments.length];
+        for (int i = 0; i < appointments.length; i++) {
+            bucketSortTuples[i] = new BucketSortTuple(0, this.appointments[i]);
+        }
         // for i<-0 to b-1 (each dimension of input list values)
+        for (int i = 4; i >= 0; i--) {
+            if (i == 2) { // Skip doing radix sort on the ":" index
+                continue;
+            }
+            // replace key k of item (k, x) with bit xi of x
+            for (int j = 0; j < this.numAppointments; j++) {
+//                System.out.println(bucketSortTuples[j].getPatient());
+                int timeChar =
+                        Integer.parseInt(bucketSortTuples[j].getPatient().getTime().charAt(i));
+//                System.out.println(timeChar);
+                bucketSortTuples[j].key = timeChar;
+                System.out.println(String.format("%s : %s", bucketSortTuples[j].getKey(),
+                        bucketSortTuples[j].getPatient().getName()));
+            }
+            //Bucket sort
+        }
 
-        // replace key k of item (k, x) with bit xi of x
 
-        //Bucket sort
     }
 
-    public void bucketSort()
+//    public void bucketSort()
 
     @Override
     public Iterator<PatientBase> iterator() {
@@ -118,6 +136,7 @@ public class Hospital3 extends HospitalBase {
         hospital.addPatient(p1);
         hospital.addPatient(p2);
         hospital.addPatient(p3);
+        hospital.decimalRadixSort(hospital.appointments);
         var patients = new Patient[] {p1, p2, p3};
         int i = 0;
         for (var patient : hospital) {
@@ -127,11 +146,11 @@ public class Hospital3 extends HospitalBase {
 }
 
 /** Private class to define the key value pair used in bucket sort */
-class bucketSortTuple {
+class BucketSortTuple {
     int key;
     PatientBase patient;
 
-    public bucketSortTuple(int key, PatientBase patient) {
+    public BucketSortTuple(int key, PatientBase patient) {
         this.key = key;
         this.patient = patient;
     }
