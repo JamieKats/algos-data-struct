@@ -66,35 +66,64 @@ public class Hospital3 extends HospitalBase {
         appointments[p] = tmp;
     }
 
-    public void decimalRadixSort(PatientBase[] appointments) {
-//        PatientBase[] appointments = this.appointments;
-        // Create key value list (0, x)
-        BucketSortTuple[] bucketSortTuples = new BucketSortTuple[appointments.length];
-        for (int i = 0; i < appointments.length; i++) {
-            bucketSortTuples[i] = new BucketSortTuple(0, this.appointments[i]);
+    public void mergeSort(PatientBase[] patients, int leftIndex, int rightIndex) {
+        if (leftIndex < rightIndex) {
+            // calculate middle index
+            int middleIndex = (rightIndex + leftIndex) / 2;
+            mergeSort(patients, leftIndex, middleIndex);
+            mergeSort(patients, middleIndex + 1, rightIndex);
+            merge(patients, leftIndex, middleIndex, rightIndex);
         }
-        // for i<-0 to b-1 (each dimension of input list values)
-        for (int i = 4; i >= 0; i--) {
-            if (i == 2) { // Skip doing radix sort on the ":" index
-                continue;
-            }
-            // replace key k of item (k, x) with bit xi of x
-            for (int j = 0; j < this.numAppointments; j++) {
-//                System.out.println(bucketSortTuples[j].getPatient());
-                int timeChar =
-                        Integer.parseInt(bucketSortTuples[j].getPatient().getTime().charAt(i));
-//                System.out.println(timeChar);
-                bucketSortTuples[j].key = timeChar;
-                System.out.println(String.format("%s : %s", bucketSortTuples[j].getKey(),
-                        bucketSortTuples[j].getPatient().getName()));
-            }
-            //Bucket sort
-        }
-
-
     }
 
-//    public void bucketSort()
+    public void merge(PatientBase[] patients, int leftIndex, int middleIndex, int rightIndex) {
+        int leftSize = middleIndex - leftIndex; // size of first half of A
+        int rightSize = rightIndex - middleIndex + 1; // size of second half of A
+        System.out.println("before left slice");
+        PatientBase[] leftPatients = slicePatients(patients, leftIndex, middleIndex);
+        System.out.println("before right slice");
+        PatientBase[] rightPatients = slicePatients(patients, middleIndex, rightIndex);
+//        System.out.println(leftSize);
+//        System.out.println(rightSize);
+//        System.out.println(leftPatients.length == leftSize);
+//        System.out.println(rightPatients.length == rightSize);
+        int i = 0;
+        int j = 0;
+        int k = leftIndex;
+        while (i < leftSize && j < rightSize) {
+            if (leftPatients[i].compareTo(rightPatients[j]) <= 0) {
+                patients[k++] = leftPatients[i++];
+            } else {
+                patients[k++] = rightPatients[j++];
+            }
+        }
+        while (i < leftSize) { // Copy rest of left array
+            patients[k++] = leftPatients[i++];
+        }
+        while (j < rightSize) { // Copy rest of right array
+            patients[k++] = rightPatients[j++];
+        }
+    }
+
+    public PatientBase[] slicePatients(PatientBase[] patients, int leftIndex, int rightIndex) {
+        System.out.println(String.format("leftIndex: %s, rightIndex: %s", leftIndex, rightIndex));
+        int sliceSize = rightIndex - leftIndex + 1;
+        System.out.println(String.format("sliceSize = %s", sliceSize));
+        PatientBase[] patientsCopy = new PatientBase[sliceSize];
+        for (int i = 0; i < sliceSize; i++) {
+            System.out.println(String.format("Left index %s", leftIndex));
+            System.out.println(String.format("patients.length %s", patients.length));
+            System.out.println(String.format("i + left ind %s", i + leftIndex));
+            patientsCopy[i] = patients[i + leftIndex];
+        }
+
+        for (int i = 0; i < sliceSize; i++) {
+//            System.out.println(patientsCopy[i]);
+        }
+
+
+        return patientsCopy;
+    }
 
     @Override
     public Iterator<PatientBase> iterator() {
@@ -102,8 +131,13 @@ public class Hospital3 extends HospitalBase {
         return new Iterator<PatientBase>() {
 
             int currIndex = 0;
+            boolean isSorted = false;
             @Override
             public boolean hasNext() {
+                if (!isSorted) {
+                    mergeSort(appointments,0, numAppointments);
+                    isSorted = true;
+                }
                 if (currIndex < numAppointments) {
                     return true;
                 }
@@ -130,16 +164,27 @@ public class Hospital3 extends HospitalBase {
          * The following main method is provided for simple debugging only
          */
         var hospital = new Hospital3();
-        var p1 = new Patient("Max", "11:00");
+        var p1 = new Patient("Max", "17:00");
         var p2 = new Patient("Alex", "13:15");
         var p3 = new Patient("George", "14:00");
+        var p4 = new Patient("Geo", "12:00");
+        var p5 = new Patient("Jamie", "11:00");
         hospital.addPatient(p1);
         hospital.addPatient(p2);
         hospital.addPatient(p3);
-        hospital.decimalRadixSort(hospital.appointments);
+        hospital.addPatient(p4);
+        hospital.addPatient(p5);
+        hospital.merge(hospital.appointments, 0, 3, 4);
+//        for (int i = 0; i < hospital.numAppointments; i++) {
+//            System.out.println(hospital.appointments[i]);
+//        }
+
+
+
         var patients = new Patient[] {p1, p2, p3};
         int i = 0;
         for (var patient : hospital) {
+            System.out.println(patient);
             assert Objects.equals(patient, patients[i++]);
         }
     }
