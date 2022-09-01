@@ -32,6 +32,9 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 		return null;
 	}
 
+	/** Restructure by tri node restructuring
+	 * 1. FInd the node with severity >= the severity given
+	 * 2. use tri node restructuing to move this node to the top??*/
 	@Override
 	public void restructureTree(int severity) {
 		/* Add your code here! */
