@@ -66,20 +66,48 @@ public class Hospital3 extends HospitalBase {
         appointments[p] = tmp;
     }
 
+    /** All values between and including leftIndex and rightIndex are used for sorting */
     public void mergeSort(PatientBase[] patients, int leftIndex, int rightIndex) {
+//        System.out.println((rightIndex-leftIndex));
+//        System.out.println("mergerSort called.....");
+//        System.out.println(String.format("leftind = %s, rightind = %s", leftIndex, rightIndex));
+//
+        int size = rightIndex - leftIndex + 1;
+//        System.out.println(String.format("patients size = %s", size));
+//        for (int i = 0; i < size; i++) {
+//            System.out.println(patients[i + leftIndex]);
+//        }
+
+        if (size < 2) {
+            return;
+        }
+
+
+
+
         if (leftIndex < rightIndex) {
-            // calculate middle index
-            int middleIndex = (rightIndex + leftIndex) / 2;
-            mergeSort(patients, leftIndex, middleIndex);
-            mergeSort(patients, middleIndex + 1, rightIndex);
-            merge(patients, leftIndex, middleIndex, rightIndex);
+            // TODO put size calc here
+            int middle = size / 2;
+//            System.out.println(String.format("middle = %s", middle));
+//            System.out.println(String.format("rightIndex = %s", rightIndex));
+            mergeSort(patients, leftIndex, middle - 1);
+            mergeSort(patients, leftIndex + middle, rightIndex);
+            merge(patients, leftIndex, leftIndex + middle, rightIndex);
         }
     }
 
     /** left, middle and right index are the indexes of the values that need to be swapped */
     public void merge(PatientBase[] patients, int leftIndex, int middleIndex, int rightIndex) {
+        System.out.println(String.format("merge called........"));
+        System.out.println(String.format("leftind = %s  middle = %s  rightInd = %s", leftIndex,
+                middleIndex, rightIndex));
+        for (int i = leftIndex; i < leftIndex - rightIndex + 1; i++) {
+            System.out.println(patients[i]);
+        }
         int leftSize = middleIndex - leftIndex; // size of first half of A
         int rightSize = rightIndex - middleIndex + 1; // size of second half of A
+        System.out.println(String.format("leftsize = %s", leftSize));
+        System.out.println(String.format("rightsize = %s", rightSize));
         System.out.println("before left slice");
         PatientBase[] leftPatients = slicePatients(patients, leftIndex, middleIndex);
         for (int i = 0; i < leftPatients.length; i++) {
@@ -182,7 +210,9 @@ public class Hospital3 extends HospitalBase {
         var p3 = new Patient("George", "14:00");
         var p4 = new Patient("Geo", "11:40");
         var p5 = new Patient("Jamie", "11:00");
-        var p6 = new Patient("John", "08:00");
+        var p6 = new Patient("Richard", "09:30");
+        var p7 = new Patient("Matt", "08:00");
+//        var p6 = new Patient("John", "08:00");
 //        var p1 = new Patient("Max", "13:10");
 //        var p2 = new Patient("Alex", "17:00");
 //        var p3 = new Patient("George", "17:20");
@@ -195,6 +225,7 @@ public class Hospital3 extends HospitalBase {
         hospital.addPatient(p4);
         hospital.addPatient(p5);
         hospital.addPatient(p6);
+        hospital.addPatient(p7);
         hospital.mergeSort(hospital.appointments, 0, hospital.numAppointments - 1);
         System.out.println("/////RESULT OF MERGESORT/////");
 
