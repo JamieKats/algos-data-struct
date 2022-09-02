@@ -3,6 +3,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Hospital2 extends HospitalBase {
+    /** TODO fix class values that should be initlaised in class init method */
 
     private PatientBase[] appointments;
 
