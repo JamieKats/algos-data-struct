@@ -11,6 +11,8 @@ public class LoginSystem extends LoginSystemBase {
 
     private int hashConstant = 31;
 
+    private double loadFactor = 0.5;
+
     LoginSystem() {
         this.hashTable = new UserInfo[initialSize];
         this.numUsers = 0;
@@ -54,7 +56,7 @@ public class LoginSystem extends LoginSystemBase {
     public boolean addUser(String email, String password) {
         /* Add your code here! */
         // Check if hash table needs to be resized
-        if (this.numUsers == hashTable.length) {
+        if (arrayTooFull()) {
             growArrayTripleStrategy();
         }
         UserInfo newUser = new UserInfo(email, this.hashCode(password));
@@ -82,20 +84,44 @@ public class LoginSystem extends LoginSystemBase {
         return false;
     }
 
+    /** The number of values in the hash table must be less than loadfactor * hashtable size */
+    boolean arrayTooFull() {
+//        if (this.hashTable.length * this.loadFactor < this.numUsers)
+        return (this.hashTable.length * this.loadFactor < this.numUsers);
+    }
+
     /** TODO pass function callback into linearprobe that will handle what to do if you find the
      * user already in the hashtable e.g. removeuser, addUser, changePassword will all do
-     * linearprobing but will have different functionality */
-//    public boolean linearProbe(int emailIndex, UserInfo user) {
-//        for (int i = 0; i < this.hashTable.length; i++) {
-//            int probeLocation = (i + emailIndex) % this.hashTable.length;
-//
-//            // The spot is empty
-//            if (this.hashTable[probeLocation] != null) { continue; }
-//            this.hashTable[probeLocation] = user;
-//            return true;
-//        }
-//        return false;
-//    }
+     * linearprobing but will have different functionality
+     *
+     * Can linear probe and return the index of the next available slot or DEL
+     *
+     * if linear probing for a key you either find
+     * 1. they key already in the hashtable: return -1
+     * 2. an empty slot or a DEL slot: return the index
+     *
+     * The number of values will always be > load factor * size of table
+     * */
+    public int linearProbe(UserInfo user) {
+        int emailHash = this.hashCode(user.getEmail());
+        int emailIndex = emailHash % hashTable.length;
+        for (int i = 0; i < this.hashTable.length; i++) {
+            int probeLocation = (i + emailIndex) % this.hashTable.length;
+            if (this.hashTable[probeLocation].get) {
+
+            }
+            // The spot is empty
+            if (this.hashTable[probeLocation] == null) {
+                // if encountered a DEL return the DEL location
+                // otherwise return the null probe location
+                return probeLocation;
+            }
+
+            this.hashTable[probeLocation] = user;
+            return true;
+        }
+        return false;
+    }
 
     public void growArrayTripleStrategy() {
         int oldHashTableSize = this.hashTable.length;
