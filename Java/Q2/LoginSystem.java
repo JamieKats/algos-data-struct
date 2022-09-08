@@ -1,3 +1,5 @@
+import jdk.jshell.spi.ExecutionControl;
+
 import java.util.function.Function;
 
 public class LoginSystem extends LoginSystemBase {
@@ -66,27 +68,30 @@ public class LoginSystem extends LoginSystemBase {
         int passwordHash = this.hashCode(password);
         int emailIndex = emailHash % this.hashTable.length;
 
-        // check if user in table already
-        for (int i = 0; i < this.hashTable.length; i++) {
-            int probeLocation = (i + emailIndex) % this.hashTable.length;
-            UserInfo userInfo = this.hashTable[i];
+//        // check if user in table already
+//        for (int i = 0; i < this.hashTable.length; i++) {
+//            int probeLocation = (i + emailIndex) % this.hashTable.length;
+//            UserInfo userInfo = this.hashTable[probeLocation];
+//
+//            // Check if user already in system
+//            if (userInfo.getEmail().equals(email)) {
+//                return false;
+//            }
+//        }
 
-            // Check if user already in system
-            if (userInfo.getEmail().equals(email)) {
-                return
-            }
+        // linear probe
+        int probe = linearProbe(newUser);
+        if (probe == -2) { // User already in system
+            return false;
         }
 
-
-
-        //
+        this.hashTable[probe] = newUser;
         this.numUsers++;
-        return false;
+        return true;
     }
 
     /** The number of values in the hash table must be less than loadfactor * hashtable size */
     boolean arrayTooFull() {
-//        if (this.hashTable.length * this.loadFactor < this.numUsers)
         return (this.hashTable.length * this.loadFactor < this.numUsers);
     }
 
@@ -105,22 +110,32 @@ public class LoginSystem extends LoginSystemBase {
     public int linearProbe(UserInfo user) {
         int emailHash = this.hashCode(user.getEmail());
         int emailIndex = emailHash % hashTable.length;
+
+        int deletedUserIndex = -1;
         for (int i = 0; i < this.hashTable.length; i++) {
             int probeLocation = (i + emailIndex) % this.hashTable.length;
-            if (this.hashTable[probeLocation].get) {
+            UserInfo probedUser = this.hashTable[probeLocation];
 
-            }
-            // The spot is empty
-            if (this.hashTable[probeLocation] == null) {
+            if (probedUser == null) { // empty spot found
                 // if encountered a DEL return the DEL location
                 // otherwise return the null probe location
-                return probeLocation;
+                if (deletedUserIndex != -1) { // a previous DEL location has been found
+                    return deletedUserIndex;
+                }
+                return probeLocation; // Return the probelocation if no previous DEL found
             }
 
-            this.hashTable[probeLocation] = user;
-            return true;
+            // If you find the first deleted user set deletedUserIndex
+            if (deletedUserIndex == -1 && probedUser.getIsDeleted()) {
+                deletedUserIndex = probeLocation;
+            }
+
+            // if you find the same user already in the system return -2
+            if (probedUser.equals(user)) {
+                return -2;
+            }
         }
-        return false;
+        return -1; // no valid locations have been found
     }
 
     public void growArrayTripleStrategy() {
@@ -137,37 +152,47 @@ public class LoginSystem extends LoginSystemBase {
 
             // Rehash and compress email with new array size
             // allowing this code since emails will be limited in size Ed Post #207
-            int emailHash = this.hashCode(user.getEmail());
+            int emailHash = this.hashCode(userOldTable.getEmail());
             int emailIndex = emailHash % this.hashTable.length;
 
             // Insert email into new hash table
+            // TODO call add() for new array rather than rewrite the logic
             for (int j = 0; j < this.hashTable.length; j++) {
                 int probeLocation = (j + emailIndex) % this.hashTable.length;
-                UserInfo userNewTable = this.hashTable[probeLocation];
 
-                // If we find empty spot put user in
-                if (userNewTable == null) {
+                // If we find empty spot put user in and break out of inner loop
+                if (this.hashTable[probeLocation] == null) {
                     this.hashTable[probeLocation] = userOldTable;
+                    break;
                 }
             }
         }
     }
 
+    /** Set the user isDeleted to true */
     @Override
     public boolean removeUser(String email, String password) {
         /* Add your code here! */
+        UserInfo userToRemove = new UserInfo(email, this.hashCode(password));
         int hashedEmail = this.hashCode(email);
         int emailIndex = hashedEmail % this.hashTable.length;
         for (int i = 0; i < this.hashTable.length; i++) {
             int probeLocation = (i + emailIndex) % this.hashTable.length;
-            UserInfo userInfo = this.hashTable[probeLocation];
+            UserInfo probedUser = this.hashTable[probeLocation];
 
             // For each user in the hashtable check the provided email matches the plain text email
             // and hashed password in the hashtable
-            if (userInfo.getEmail().equals(email)
-                && userInfo.getPasswordHash() == this.hashCode(password)) {
-                this.hashTable[probeLocation] = null; // remove user
+//            if (userInfo.getEmail().equals(email)
+//                && userInfo.getPasswordHash() == this.hashCode(password)) {
+            if (probedUser.equals(userToRemove)) {
+                this.hashTable[probeLocation].setUserAsDeleted(); // remove user
+                this.numUsers--;
                 return true;
+            }
+
+            // Finding a null means the user hasnt been inserted
+            if (this.hashTable[probeLocation] == null) {
+                break;
             }
         }
         return false;
@@ -247,7 +272,7 @@ public class LoginSystem extends LoginSystemBase {
     }
 }
 
-class UserInfo {
+class UserInfo implements Comparable<UserInfo> {
 
     /** Plaintext email stored for user otherwise if only a hashed email was stored you could end
      * up with users with the same email hash and password hash */
@@ -256,9 +281,12 @@ class UserInfo {
     /** Password hash stored for user */
     private int passwordHash;
 
+    private boolean isDeleted;
+
     public UserInfo(String email, int passwordHash) {
         this.email = email;
         this.passwordHash = passwordHash;
+        this.isDeleted = false;
     }
 
     public String getEmail() {
@@ -271,5 +299,41 @@ class UserInfo {
 
     public void setPasswordHash(int newPasswordHash) {
         this.passwordHash = newPasswordHash;
+    }
+
+    public void setUserAsDeleted() {
+        this.isDeleted = true;
+    }
+
+    public boolean getIsDeleted() {
+        return this.isDeleted;
+    }
+
+//    /** Returns 1 if the users are the same 0 if they are not the same */
+//    public int compareTo(UserInfo userInfo) {
+//        if (this.getEmail().equals(userInfo.getEmail())
+//                && this.getPasswordHash() == userInfo.getPasswordHash()
+//                && this.getIsDeleted() == userInfo.getIsDeleted()) {
+//            return 1;
+//        }
+//        return 0;
+////        throw new ExecutionControl.NotImplementedException("UserInfo compareTo not implemented!")
+//    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof UserInfo)) {
+            return false;
+        }
+
+        UserInfo user = (UserInfo) obj;
+
+        return this.getEmail().equals(user.getEmail())
+                && this.getPasswordHash() == user.getPasswordHash()
+                && this.getIsDeleted() == user.getIsDeleted();
     }
 }
