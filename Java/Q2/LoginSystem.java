@@ -6,14 +6,16 @@ public class LoginSystem extends LoginSystemBase {
     /** TODO
      * - Can we use String.length? */
 
-    private int initialSize = 101;
+//    private int initialSize = 101;
+    private int initialSize = 5;
     UserInfo[] hashTable;
 
     private int numUsers;
 
     private int hashConstant = 31;
 
-    private double loadFactor = 0.5;
+//    private double loadFactor = 0.5;
+    private double loadFactor = 1;
 
     LoginSystem() {
         this.hashTable = new UserInfo[initialSize];
@@ -39,13 +41,6 @@ public class LoginSystem extends LoginSystemBase {
         }
         return this.hashCode(key.substring(0, key.length() - 1)) * hashConstant + key.charAt(key.length() - 1);
     }
-
-//    public int hashHelper(String key) {
-//         if (key.length() == 1) {
-//             return key.charAt(0);
-//         }
-//         return hashHelper(key.substring(0, key.length() - 1)) * hashConstant + key.charAt(key.length() - 1);
-//    }
 
     /** Need to scan whole map to make sure user not already in the table
      * TODO ask if the addUser must always scan entire table
@@ -92,7 +87,9 @@ public class LoginSystem extends LoginSystemBase {
 
     /** The number of values in the hash table must be less than loadfactor * hashtable size */
     boolean arrayTooFull() {
-        return (this.hashTable.length * this.loadFactor < this.numUsers);
+        System.out.println(this.hashTable.length * this.loadFactor);
+        System.out.println(this.numUsers);
+        return (this.hashTable.length * this.loadFactor <= this.numUsers);
     }
 
     /** TODO pass function callback into linearprobe that will handle what to do if you find the
@@ -113,12 +110,11 @@ public class LoginSystem extends LoginSystemBase {
 
         int deletedUserIndex = -1;
         for (int i = 0; i < this.hashTable.length; i++) {
+            System.out.println("probing...");
             int probeLocation = (i + emailIndex) % this.hashTable.length;
             UserInfo probedUser = this.hashTable[probeLocation];
 
             if (probedUser == null) { // empty spot found
-                // if encountered a DEL return the DEL location
-                // otherwise return the null probe location
                 if (deletedUserIndex != -1) { // a previous DEL location has been found
                     return deletedUserIndex;
                 }
@@ -128,6 +124,7 @@ public class LoginSystem extends LoginSystemBase {
             // If you find the first deleted user set deletedUserIndex
             if (deletedUserIndex == -1 && probedUser.getIsDeleted()) {
                 deletedUserIndex = probeLocation;
+                continue;
             }
 
             // if you find the same user already in the system return -2
@@ -135,10 +132,15 @@ public class LoginSystem extends LoginSystemBase {
                 return -2;
             }
         }
+        if (deletedUserIndex != -1) { // if whole table traversed return the index of the first
+            // DEL one
+            return deletedUserIndex;
+        }
         return -1; // no valid locations have been found
     }
 
     public void growArrayTripleStrategy() {
+        System.out.println("Growing array...");
         int oldHashTableSize = this.hashTable.length;
         int newHashTableSize = oldHashTableSize * 3;
         UserInfo[] oldHashTable = this.hashTable;
@@ -180,22 +182,21 @@ public class LoginSystem extends LoginSystemBase {
             int probeLocation = (i + emailIndex) % this.hashTable.length;
             UserInfo probedUser = this.hashTable[probeLocation];
 
+            // Finding a null means the user hasnt been inserted
+            if (probedUser == null) {
+                break;
+            }
+
             // For each user in the hashtable check the provided email matches the plain text email
             // and hashed password in the hashtable
-//            if (userInfo.getEmail().equals(email)
-//                && userInfo.getPasswordHash() == this.hashCode(password)) {
             if (probedUser.equals(userToRemove)) {
                 this.hashTable[probeLocation].setUserAsDeleted(); // remove user
                 this.numUsers--;
                 return true;
             }
-
-            // Finding a null means the user hasnt been inserted
-            if (this.hashTable[probeLocation] == null) {
-                break;
-            }
         }
-        return false;
+        System.out.println("removeUser: user not found...");
+        return false; // user not found in hash table
     }
 
 
@@ -203,24 +204,27 @@ public class LoginSystem extends LoginSystemBase {
     @Override
     public int checkPassword(String email, String password) {
         /* Add your code here! */
+        UserInfo user = new UserInfo(email, this.hashCode(password));
         int hashedEmail = this.hashCode(email);
         int emailIndex = hashedEmail % this.hashTable.length;
         for (int i = 0; i < this.hashTable.length; i++) {
             int probeLocation = (i + emailIndex) % this.hashTable.length;
-            UserInfo userInfo = this.hashTable[probeLocation];
+            UserInfo userProbed = this.hashTable[probeLocation];
+
+            // If null is found the user is not in the system
+            if (userProbed == null) {
+                break;
+            }
 
             // User is in the system and password is correct
-            if (userInfo.getEmail().equals(email)
-                && userInfo.getPasswordHash() == this.hashCode(password)) {
+            if (userProbed.equals(user)) {
                 return probeLocation;
-            } else if (userInfo.getEmail().equals(email)
-                    && userInfo.getPasswordHash() != this.hashCode(password)) {
-                // User is in system but password is incorrect
-                return -2;
+            } else if (userProbed.getEmail().equals(email)
+                    && userProbed.getPasswordHash() != this.hashCode(password)) {
+                return -2; // User is in system but password is incorrect
             }
         }
-        // User not in the system
-        return -1;
+        return -1; // User not in the system
     }
 
     @Override
@@ -228,18 +232,27 @@ public class LoginSystem extends LoginSystemBase {
         /* Add your code here! */
         int hashedEmail = this.hashCode(email);
         int emailIndex = hashedEmail % this.hashTable.length;
+        UserInfo oldUser = new UserInfo(email, this.hashCode(oldPassword));
+
         for (int i = 0; i < this.hashTable.length; i++) {
+            System.out.println("probing changepassword...");
             int probeLocation = (i + emailIndex) % this.hashTable.length;
-            UserInfo userInfo = this.hashTable[probeLocation];
+            UserInfo probedUser = this.hashTable[probeLocation];
+
+            if (probedUser == null) { // user could not be found
+                System.out.println("changePassword: User not found");
+                break;
+            }
 
             // If user in system and old password == password in system
-            if (userInfo.getEmail().equals(email)
-                    && userInfo.getPasswordHash() == this.hashCode(oldPassword)) {
+            if (probedUser.equals(oldUser)) {
                 // change password
-                userInfo.setPasswordHash(this.hashCode(newPassword));
+                System.out.println("Changing passwords");
+                this.hashTable[probeLocation].setPasswordHash(this.hashCode(newPassword));
                 return true;
-            } else if (userInfo.getEmail().equals(email)
-                    && userInfo.getPasswordHash() != this.hashCode(oldPassword)) {
+            } else if (probedUser.getEmail().equals(email)
+                    && probedUser.getPasswordHash() != this.hashCode(oldPassword)) { // old
+                // password incorrect
                 return false;
             }
         }
@@ -248,6 +261,19 @@ public class LoginSystem extends LoginSystemBase {
     }
 
     /* Add any extra functions below */
+
+    public void printTable() {
+        System.out.println("/// HASH TABLE ///");
+        for (int i = 0; i < this.hashTable.length; i++) {
+            if (this.hashTable[i] == null) {
+                System.out.println("null");
+                continue;
+            }
+            UserInfo userInfo = this.hashTable[i];
+            System.out.println(userInfo.getEmail() + " : " + userInfo.getPasswordHash() + " : " + userInfo.getIsDeleted());
+        }
+        System.out.println("/// HASH TABLE END ///");
+    }
 
     public static void main(String[] args) {
         /*
@@ -261,18 +287,106 @@ public class LoginSystem extends LoginSystemBase {
         System.out.println((int)'c');
         System.out.println(loginSystem.hashCode("abc"));
         assert loginSystem.hashCode("GQHTMP") == loginSystem.hashCode("H2HTN1");
-        assert loginSystem.size() == 101;
+//        assert loginSystem.size() == 101;
 
         assert loginSystem.checkPassword("a@b.c", "L6ZS9") == -1;
         loginSystem.addUser("a@b.c", "L6ZS9");
+        System.out.println("num users " + loginSystem.numUsers);
+        loginSystem.printTable();
         assert loginSystem.checkPassword("a@b.c", "ZZZZZZ") == -2;
-        assert loginSystem.checkPassword("a@b.c", "L6ZS9") == 94;
+//        assert loginSystem.checkPassword("a@b.c", "L6ZS9") == 94;
         loginSystem.removeUser("a@b.c", "L6ZS9");
         assert loginSystem.checkPassword("a@b.c", "L6ZS9") == -1;
+
+        // add more users
+        loginSystem.addUser("h@h.c", "hello");
+        loginSystem.printTable();
+
+        loginSystem.addUser("b@b.c", "world");
+        loginSystem.printTable();
+
+        loginSystem.addUser("w@w.c", "password");
+        loginSystem.printTable();
+
+        loginSystem.addUser("w@a.c", "password1");
+        loginSystem.printTable();
+        System.out.println("num users " + loginSystem.numUsers);
+        loginSystem.addUser("g@a.c", "pass");
+        loginSystem.printTable();
+
+        loginSystem.addUser("x@a.c", "2HwK");
+        loginSystem.printTable();
+
+        loginSystem.addUser("x@x.c", "henw");
+        loginSystem.printTable();
+        System.out.println("num users " + loginSystem.numUsers);
+        // 10th user
+        loginSystem.addUser("x@3.c", "edhenw");
+        loginSystem.printTable();
+
+        loginSystem.addUser("q@3.c", "crikey");
+        loginSystem.printTable();
+
+        System.out.println("table size " + loginSystem.size());
+        loginSystem.addUser("p@3.c", "C0N");
+        loginSystem.printTable();
+
+        // table should grow
+        loginSystem.addUser("e@3.c", "CON");
+        loginSystem.printTable();
+
+        // try check password for user
+        System.out.println("user e@3.c at location " + loginSystem.checkPassword("e@3.c", "CON"));
+
+        loginSystem.removeUser("e@3.c", "CON");
+        loginSystem.printTable();
+        System.out.println("num users " + loginSystem.numUsers);
+
+        // try check password for deleted user
+        assert loginSystem.checkPassword("e@3.c", "CON") == -1;
+
+        // check user that never existed
+        assert loginSystem.checkPassword("bad", "CON") == -1;
+
+        // check user wrong pass
+        assert loginSystem.checkPassword("h@h.c", "hello1") == -2;
+
+        // change password
+        loginSystem.changePassword("h@h.c", "hello", "hello1");
+        loginSystem.printTable();
+
+        // change password wrong old
+        assert loginSystem.changePassword("h@h.c", "hello", "hello1") == false;
+
+        // change password successful
+        assert loginSystem.changePassword("h@h.c", "hello1", "helloworld") == true;
+        loginSystem.printTable();
+        // change password user doesnt exist
+        assert loginSystem.changePassword("aaaaa", "hello", "hello1") == false;
+
+        // REMOVE USER TESTS
+
+        // remove user not found
+        assert loginSystem.removeUser("aaaaa", "bbbb") == false;
+
+        // remove user wrong pass
+        assert loginSystem.removeUser("q@3.c", "bbbb") == false;
+
+        // remove user correct pass
+        assert loginSystem.removeUser("q@3.c", "crikey") == true;
+        loginSystem.printTable();
+
+        // LINEAR PROBE TEST
+
+        // probe user exists
+        System.out.println("b@b.c at location: " + (loginSystem.linearProbe(new UserInfo("b@b.c",
+            loginSystem.hashCode("world")))));
+
+        // probe user 
     }
 }
 
-class UserInfo implements Comparable<UserInfo> {
+class UserInfo {
 
     /** Plaintext email stored for user otherwise if only a hashed email was stored you could end
      * up with users with the same email hash and password hash */
@@ -308,17 +422,6 @@ class UserInfo implements Comparable<UserInfo> {
     public boolean getIsDeleted() {
         return this.isDeleted;
     }
-
-//    /** Returns 1 if the users are the same 0 if they are not the same */
-//    public int compareTo(UserInfo userInfo) {
-//        if (this.getEmail().equals(userInfo.getEmail())
-//                && this.getPasswordHash() == userInfo.getPasswordHash()
-//                && this.getIsDeleted() == userInfo.getIsDeleted()) {
-//            return 1;
-//        }
-//        return 0;
-////        throw new ExecutionControl.NotImplementedException("UserInfo compareTo not implemented!")
-//    }
 
     @Override
     public boolean equals(Object obj) {
