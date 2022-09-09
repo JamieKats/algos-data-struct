@@ -7,6 +7,9 @@ public class Patient extends PatientBase {
     @Override
     public int compareTo(PatientBase o) {
         /* Add your code here! */
+//        if (o == null) {
+//            return
+//        }
         return compareTimes(this.getTime(), o.getTime());
     }
 

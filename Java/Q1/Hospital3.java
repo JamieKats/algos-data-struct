@@ -40,7 +40,7 @@ public class Hospital3 extends HospitalBase {
             growArrayDoubleStrategy();
         }
 
-        // Insert patient at end of array
+        // Insert patient at end of last inserted patient
         this.appointments[this.numAppointments++] = patient;
 
         return true;
@@ -98,27 +98,27 @@ public class Hospital3 extends HospitalBase {
 
     /** left, middle and right index are the indexes of the values that need to be swapped */
     public void merge(PatientBase[] patients, int leftIndex, int middleIndex, int rightIndex) {
-        System.out.println(String.format("merge called........"));
-        System.out.println(String.format("leftind = %s  middle = %s  rightInd = %s", leftIndex,
-                middleIndex, rightIndex));
-        for (int i = leftIndex; i < leftIndex - rightIndex + 1; i++) {
-            System.out.println(patients[i]);
-        }
+//        System.out.println(String.format("merge called........"));
+//        System.out.println(String.format("leftind = %s  middle = %s  rightInd = %s", leftIndex,
+//                middleIndex, rightIndex));
+//        for (int i = leftIndex; i < leftIndex - rightIndex + 1; i++) {
+//            System.out.println(patients[i]);
+//        }
         int leftSize = middleIndex - leftIndex; // size of first half of A
         int rightSize = rightIndex - middleIndex + 1; // size of second half of A
-        System.out.println(String.format("leftsize = %s", leftSize));
-        System.out.println(String.format("rightsize = %s", rightSize));
-        System.out.println("before left slice");
+//        System.out.println(String.format("leftsize = %s", leftSize));
+//        System.out.println(String.format("rightsize = %s", rightSize));
+//        System.out.println("before left slice");
         PatientBase[] leftPatients = slicePatients(patients, leftIndex, middleIndex);
-        for (int i = 0; i < leftPatients.length; i++) {
-            System.out.println(leftPatients[i]);
-        }
-        System.out.println("before right slice");
+//        for (int i = 0; i < leftPatients.length; i++) {
+//            System.out.println(leftPatients[i]);
+//        }
+//        System.out.println("before right slice");
         PatientBase[] rightPatients = slicePatients(patients, middleIndex, rightIndex + 1);
-        for (int i = 0; i < rightPatients.length; i++) {
-            System.out.println(rightPatients[i]);
-        }
-        System.out.println("");
+//        for (int i = 0; i < rightPatients.length; i++) {
+//            System.out.println(rightPatients[i]);
+//        }
+//        System.out.println("");
 //        System.out.println(leftSize);
 //        System.out.println(rightSize);
 //        System.out.println(leftPatients.length == leftSize);
@@ -127,7 +127,19 @@ public class Hospital3 extends HospitalBase {
         int j = 0;
         int k = leftIndex;
         while (i < leftSize && j < rightSize) {
-            if (leftPatients[i].compareTo(rightPatients[j]) <= 0) {
+            if (leftPatients[i] == null) {
+                i = leftSize;
+                break;
+            } else if (rightPatients[j] == null) {
+                j = rightSize;
+                break;
+            }
+
+//            System.out.println("rightsize = " + rightSize);
+//            System.out.println("leftsize = " + leftSize);
+//            System.out.println("left patient = " + leftPatients[i]);
+//            System.out.println("right patient = " + rightPatients[i]);
+            if (rightPatients[i] != null && leftPatients[i].compareTo(rightPatients[j]) <= 0) {
                 patients[k++] = leftPatients[i++];
             } else {
                 patients[k++] = rightPatients[j++];
@@ -142,11 +154,11 @@ public class Hospital3 extends HospitalBase {
     }
 
     public PatientBase[] slicePatients(PatientBase[] patients, int leftIndex, int rightIndex) {
-        System.out.println(String.format("patients = "));
+//        System.out.println(String.format("patients = "));
         for (int i = leftIndex; i < rightIndex; i++) {
             System.out.println(patients[i]);
         }
-        System.out.println("");
+//        System.out.println("");
 //        System.out.println(String.format("leftIndex: %s, rightIndex: %s", leftIndex, rightIndex));
         int sliceSize = rightIndex - leftIndex;
 //        System.out.println(String.format("sliceSize = %s", sliceSize));
@@ -204,14 +216,25 @@ public class Hospital3 extends HospitalBase {
          * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
          * The following main method is provided for simple debugging only
          */
+//        String test = "true\ntrue\ntrue\n(Max, 11:00)\n(Alex, 13:15)\n(George, 14:00)\n";
+//        String error = "true\ntrue\ntrue\njava.lang.NullPointerException\n\tat Patient.compareTo" +
+//                "(Patient.java:10)\n\tat Patient.compareTo(Patient.java:1)\n\tat Hospital3.merge" +
+//                "(Hospital3.java:130)\n\tat Hospital3.mergeSort(Hospital3.java:95)\n\tat " +
+//                "Hospital3.mergeSort(Hospital3.java:94)\n\tat Hospital3$1.hasNext(Hospital3" +
+//                ".java:179)\n\tat Q1Runner.main(Q1Runner.java:108)\n";
+//        System.out.println(test);
+//        System.out.println(error);
+//        System.out.println("AFTER ERROR STUFFD.............................");
+
+
         var hospital = new Hospital3();
-        var p1 = new Patient("Max", "17:00");
+        var p1 = new Patient("Max", "11:00");
         var p2 = new Patient("Alex", "13:15");
         var p3 = new Patient("George", "14:00");
-        var p4 = new Patient("Geo", "11:40");
-        var p5 = new Patient("Jamie", "11:00");
-        var p6 = new Patient("Richard", "09:30");
-        var p7 = new Patient("Matt", "08:00");
+//        var p4 = new Patient("Geo", "11:40");
+//        var p5 = new Patient("Jamie", "11:00");
+//        var p6 = new Patient("Richard", "09:30");
+//        var p7 = new Patient("Matt", "08:00");
 //        var p6 = new Patient("John", "08:00");
 //        var p1 = new Patient("Max", "13:10");
 //        var p2 = new Patient("Alex", "17:00");
@@ -222,19 +245,19 @@ public class Hospital3 extends HospitalBase {
         hospital.addPatient(p1);
         hospital.addPatient(p2);
         hospital.addPatient(p3);
-        hospital.addPatient(p4);
-        hospital.addPatient(p5);
-        hospital.addPatient(p6);
-        hospital.addPatient(p7);
-        hospital.mergeSort(hospital.appointments, 0, hospital.numAppointments - 1);
-        System.out.println("/////RESULT OF MERGESORT/////");
+//        hospital.addPatient(p4);
+//        hospital.addPatient(p5);
+//        hospital.addPatient(p6);
+//        hospital.addPatient(p7);
+//        hospital.mergeSort(hospital.appointments, 0, hospital.numAppointments - 1);
+//        System.out.println("/////RESULT OF MERGESORT/////");
 
 //        System.out.println(hospital.numAppointments);
 //        hospital.merge(hospital.appointments, 0, hospital.numAppointments / 2,
 //                hospital.numAppointments - 1);
-        for (int i = 0; i < hospital.numAppointments; i++) {
-            System.out.println(hospital.appointments[i]);
-        }
+//        for (int i = 0; i < hospital.numAppointments; i++) {
+//            System.out.println(hospital.appointments[i]);
+//        }
 
         // Test slice function
 //        PatientBase[] test = hospital.slicePatients(hospital.appointments, 4,
@@ -244,12 +267,16 @@ public class Hospital3 extends HospitalBase {
 //        }
 
 
-//        var patients = new Patient[] {p1, p2, p3};
-//        int i = 0;
-//        for (var patient : hospital) {
-//            System.out.println(patient);
-//            assert Objects.equals(patient, patients[i++]);
+        var patients = new Patient[] {p1, p2, p3};
+//        var patients = new Patient[] {p2, p3, p1};
+        int i = 0;
+//        for (int j = 0; j <  hospital.appointments.length; j++) {
+//            System.out.println(hospital.appointments[j]);
 //        }
+        for (var patient : hospital) {
+            System.out.println(patient);
+            assert Objects.equals(patient, patients[i++]);
+        }
     }
 }
 
