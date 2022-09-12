@@ -52,6 +52,12 @@ public class Hospital3 extends HospitalBase {
 //        appointments[p] = tmp;
 //    }
 
+    public Node sort(Node head, Node tail, int numNodes) {
+        Node node = mergeSort(head, tail, numNodes);
+        node.previous = null;
+        return node;
+    }
+
     /** All values between and including leftIndex and rightIndex are used for sorting */
     public Node mergeSort(Node head, Node tail, int numNodes) {
 //        System.out.println("merge sort hit");
@@ -250,7 +256,8 @@ public class Hospital3 extends HospitalBase {
 //                    System.out.println(numAppointments);
 //                    System.out.println();
 //                    System.out.println();
-                    head = mergeSort(getHead(), getTail(), numAppointments);
+//                    head = mergeSort(getHead(), getTail(), numAppointments);
+                    head = sort(getHead(), getTail(), numAppointments);
                     isSorted = true;
                 }
 
@@ -319,8 +326,12 @@ public class Hospital3 extends HospitalBase {
         hospital.addPatient(p5);
         hospital.addPatient(p6);
 //        Node newHead = hospital.mergeSort(hospital.head, hospital.tail, hospital.numAppointments);
-//        System.out.println();
-//        hospital.printList(newHead);
+        Node newHead = hospital.sort(hospital.head, hospital.tail, hospital.numAppointments);
+        System.out.println();
+        hospital.printList(newHead);
+//        hospital.printList(newHead.previous);
+        System.out.println(newHead.previous);
+        System.out.println();
 
 
 //        hospital.addPatient(p7);
