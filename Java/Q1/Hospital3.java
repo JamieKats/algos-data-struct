@@ -4,67 +4,54 @@ import java.util.Objects;
 
 public class Hospital3 extends HospitalBase {
 
-    private PatientBase[] appointments;
+    private Node head;
+
+    private Node tail;
+
+    private int numAppointments;
 
     private String startTime = "08:00";
     private String endTime = "17:59";
     private String breakStart = "11:59";
     private String breakEnd = "13:00";
 
-    private final int initialArraySize = 1;
-
-    private int growthMultiplier;
-
-    private int appointmentsSize;
-
-    private int numAppointments;
-
     public Hospital3() {
         /* Add your code here! */
-        this.appointments = new PatientBase[initialArraySize];
-        this.appointmentsSize = initialArraySize;
+        this.head = null;
+        this.tail = null;
         this.numAppointments = 0;
-        this.growthMultiplier = 0;
     }
 
     @Override
     public boolean addPatient(PatientBase patient) {
         /* Add your code here! */
+        // Check time is valid
         if (!Patient.validTime(startTime, endTime, breakStart, breakEnd, patient.getTime())) {
             return false;
         }
 
-        // Is array large enough?
-        // Doubling strategy array growth
-        if (this.numAppointments == this.appointments.length) { // Need to expand array
-            growArrayDoubleStrategy();
+        // create node
+        Node newPatientNode = new Node(patient);
+
+        if (this.numAppointments == 0) { // adding first patientNode
+            this.head = newPatientNode;
+            this.tail = newPatientNode;
+        } else {
+            this.tail.setNext(newPatientNode);
+            Node oldTail = this.tail;
+            this.tail = newPatientNode;
+            newPatientNode.setPrevious(oldTail);
         }
-
-        // Insert patient at end of last inserted patient
-        this.appointments[this.numAppointments++] = patient;
-
+        this.numAppointments++;
         return true;
     }
 
-    /** Increase array size by doubling strategy to achieve O(1) amortised array growth */
-    public void growArrayDoubleStrategy() {
-        int oldAppointmentsSize = this.appointmentsSize;
-        this.appointmentsSize = this.appointmentsSize * 2;
-        PatientBase[] newArray = new PatientBase[this.appointmentsSize];
-
-        // Copy old array values into temp new array
-        for (int i = 0; i < oldAppointmentsSize; i++) {
-            newArray[i] = this.appointments[i];
-        }
-        this.appointments = newArray;
-    }
-
-    /** Swap the patients at index i and p */
-    public void swapPatients(int i, int p, PatientBase[] appointments) {
-        PatientBase tmp = appointments[i];
-        appointments[i] = appointments[p];
-        appointments[p] = tmp;
-    }
+//    /** Swap the patients at index i and p */
+//    public void swapPatients(int i, int p, PatientBase[] appointments) {
+//        PatientBase tmp = appointments[i];
+//        appointments[i] = appointments[p];
+//        appointments[p] = tmp;
+//    }
 
     /** All values between and including leftIndex and rightIndex are used for sorting */
     public void mergeSort(PatientBase[] patients, int leftIndex, int rightIndex) {
@@ -185,13 +172,15 @@ public class Hospital3 extends HospitalBase {
 
             int currIndex = 0;
             boolean isSorted = false;
+
+            Node currentNode = getHead();
             @Override
             public boolean hasNext() {
                 if (!isSorted) {
-                    mergeSort(appointments,0, numAppointments);
+//                    mergeSort(appointments,0, numAppointments);
                     isSorted = true;
                 }
-                if (currIndex < numAppointments) {
+                if (this.currentNode != null) {
                     return true;
                 }
                 return false;
@@ -202,12 +191,16 @@ public class Hospital3 extends HospitalBase {
                 if (!this.hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return appointments[currIndex++];
+                Node nextNode = this.currentNode;
+                this.currentNode = this.currentNode.getNext();
+                return nextNode.getPatient();
             }
         };
     }
 
     /* Add any extra functions below */
+
+    public Node getHead() { return this.head; }
 
     public static void main(String[] args) {
         /*
@@ -231,10 +224,10 @@ public class Hospital3 extends HospitalBase {
         var p1 = new Patient("Max", "11:00");
         var p2 = new Patient("Alex", "13:15");
         var p3 = new Patient("George", "14:00");
-//        var p4 = new Patient("Geo", "11:40");
-//        var p5 = new Patient("Jamie", "11:00");
-//        var p6 = new Patient("Richard", "09:30");
-//        var p7 = new Patient("Matt", "08:00");
+        var p4 = new Patient("Geo", "11:40");
+        var p5 = new Patient("Jamie", "11:00");
+        var p6 = new Patient("Richard", "09:30");
+        var p7 = new Patient("Matt", "08:00");
 //        var p6 = new Patient("John", "08:00");
 //        var p1 = new Patient("Max", "13:10");
 //        var p2 = new Patient("Alex", "17:00");
@@ -242,13 +235,14 @@ public class Hospital3 extends HospitalBase {
 //        var p4 = new Patient("Geo", "11:40");
 //        var p5 = new Patient("Jamie", "14:00");
 //        var p6 = new Patient("Bort", "14:20");
+
         hospital.addPatient(p1);
         hospital.addPatient(p2);
         hospital.addPatient(p3);
-//        hospital.addPatient(p4);
-//        hospital.addPatient(p5);
-//        hospital.addPatient(p6);
-//        hospital.addPatient(p7);
+        hospital.addPatient(p4);
+        hospital.addPatient(p5);
+        hospital.addPatient(p6);
+        hospital.addPatient(p7);
 //        hospital.mergeSort(hospital.appointments, 0, hospital.numAppointments - 1);
 //        System.out.println("/////RESULT OF MERGESORT/////");
 
@@ -267,7 +261,7 @@ public class Hospital3 extends HospitalBase {
 //        }
 
 
-        var patients = new Patient[] {p1, p2, p3};
+//        var patients = new Patient[] {p1, p2, p3};
 //        var patients = new Patient[] {p2, p3, p1};
         int i = 0;
 //        for (int j = 0; j <  hospital.appointments.length; j++) {
@@ -275,22 +269,48 @@ public class Hospital3 extends HospitalBase {
 //        }
         for (var patient : hospital) {
             System.out.println(patient);
-            assert Objects.equals(patient, patients[i++]);
+//            assert Objects.equals(patient, patients[i++]);
         }
+        System.out.println("Linked list printed above...");
+//        System.out.println(hospital.getHead().getPatient());
+//        System.out.println(hospital.getHead().getNext().getPatient());
+//        System.out.println(hospital.getHead().getNext().getNext().getPatient());
+//        System.out.println(hospital.getHead().getNext().getNext().getNext());
     }
 }
 
-/** Private class to define the key value pair used in bucket sort */
-//class BucketSortTuple {
-//    int key;
-//    PatientBase patient;
+class Node {
+    PatientBase patient;
+
+    Node previous;
+
+    Node next;
+
+    public Node(PatientBase patient) {
+        this.patient = patient;
+    }
+
+    public PatientBase getPatient() { return patient; }
+
+    public Node getPrevious() { return previous; }
+
+    public Node getNext() { return next; }
+
+    public void setPrevious(Node node) { this.previous = node; }
+
+    public void setNext(Node node) { this.next = node; }
+}
+
+//class appointmentsList {
+//    Node head;
 //
-//    public BucketSortTuple(int key, PatientBase patient) {
-//        this.key = key;
-//        this.patient = patient;
+//    Node root;
+//
+//    appointmentsList() {
+//        this.head = null;
+//        this.root = null;
 //    }
 //
-//    public int getKey() { return key; }
 //
-//    public PatientBase getPatient() { return patient; }
+//
 //}
