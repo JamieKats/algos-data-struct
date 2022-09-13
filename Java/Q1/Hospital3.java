@@ -97,7 +97,7 @@ public class Hospital3 extends HospitalBase {
 //        System.out.println("/////// RIGHT ///////");
 //        printList(rightListHead);
 
-
+        System.out.println(numNodes);
         leftListHead.previous = null;
         leftListTail.next = null;
 //        System.out.println("rightlist head = " + rightListHead);
@@ -245,21 +245,24 @@ public class Hospital3 extends HospitalBase {
 
             boolean isSorted = false;
 
-            Node currentNode = getHead();
+//            Node currentNode = getHead();
+            Node currentNode = sort(head, tail, numAppointments);
+
+
             @Override
             public boolean hasNext() {
-                if (!isSorted) {
-//                    System.out.println();
-//                    System.out.println();
-//                    System.out.println(getHead().getPatient());
-//                    System.out.println(getTail().getPatient());
-//                    System.out.println(numAppointments);
-//                    System.out.println();
-//                    System.out.println();
-//                    head = mergeSort(getHead(), getTail(), numAppointments);
-                    head = sort(getHead(), getTail(), numAppointments);
-                    isSorted = true;
-                }
+//                if (!isSorted) {
+////                    System.out.println();
+////                    System.out.println();
+////                    System.out.println(getHead().getPatient());
+////                    System.out.println(getTail().getPatient());
+////                    System.out.println(numAppointments);
+////                    System.out.println();
+////                    System.out.println();
+////                    head = mergeSort(getHead(), getTail(), numAppointments);
+//                    head = sort(getHead(), getTail(), numAppointments);
+//                    isSorted = true;
+//                }
 
                 if (this.currentNode != null) {
                     return true;
@@ -304,7 +307,7 @@ public class Hospital3 extends HospitalBase {
 
 
         var hospital = new Hospital3();
-        var p1 = new Patient("Max", "11:00");
+        var p1 = new Patient("Max", "15:00");
         var p2 = new Patient("Alex", "13:15");
         var p3 = new Patient("George", "08:00");
         var p4 = new Patient("Geo", "11:40");
@@ -326,12 +329,12 @@ public class Hospital3 extends HospitalBase {
         hospital.addPatient(p5);
         hospital.addPatient(p6);
 //        Node newHead = hospital.mergeSort(hospital.head, hospital.tail, hospital.numAppointments);
-        Node newHead = hospital.sort(hospital.head, hospital.tail, hospital.numAppointments);
-        System.out.println();
-        hospital.printList(newHead);
-//        hospital.printList(newHead.previous);
-        System.out.println(newHead.previous);
-        System.out.println();
+//        Node newHead = hospital.sort(hospital.head, hospital.tail, hospital.numAppointments);
+//        System.out.println();
+//        hospital.printList(newHead);
+////        hospital.printList(newHead.previous);
+//        System.out.println(newHead.previous);
+//        System.out.println();
 
 
 //        hospital.addPatient(p7);
@@ -379,10 +382,15 @@ public class Hospital3 extends HospitalBase {
 //////            assert Objects.equals(patient, patients[i++]);
         }
         System.out.println("Linked list printed above...");
-//        System.out.println(hospital.getHead().getPatient());
-//        System.out.println(hospital.getHead().getNext().getPatient());
-//        System.out.println(hospital.getHead().getNext().getNext().getPatient());
-//        System.out.println(hospital.getHead().getNext().getNext().getNext());
+//        System.out.println(hospital.head.previous.previous.previous.previous);
+        System.out.println(hospital.head.previous.previous.previous);
+        System.out.println(hospital.head.previous.previous.getPatient());
+        System.out.println(hospital.head.previous.getPatient());
+        System.out.println("head = " + hospital.head.getPatient());
+        System.out.println(hospital.head.next.getPatient());
+        System.out.println(hospital.head.next.next.getPatient());
+        System.out.println(hospital.head.next.next.next.getPatient());
+        System.out.println(hospital.head.next.next.next.next);
     }
 }
 
