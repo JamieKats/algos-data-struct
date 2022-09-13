@@ -64,29 +64,37 @@ public class Hospital3 extends HospitalBase {
 //    }
 
     public DoublyLinkedList sort(Node head, Node tail, int numNodes) {
-        DoublyLinkedList list = mergeSort(head, tail, numNodes);
+        DoublyLinkedList list1 = new DoublyLinkedList();
+        list1.head = head;
+        list1.tail = tail;
+        list1.size = numNodes;
+        DoublyLinkedList list = mergeSort(list1);
 //        node.previous = null;
         this.appointments = list;
         return list;
     }
 
+//    public void splitList() {
+//
+//    }
+
     /** All values between and including leftIndex and rightIndex are used for sorting */
-    public DoublyLinkedList mergeSort(Node head, Node tail, int numNodes) {
+    public DoublyLinkedList mergeSort(DoublyLinkedList list) {
 //        System.out.println("merge sort hit");
 //        System.out.println("numnodes = " + numNodes);
 //        System.out.println(head.next);
-        if (numNodes == 1) {
+        if (list.size == 1) {
 //            System.out.println(head.getPatient());
-            DoublyLinkedList list = new DoublyLinkedList();
-            list.head = head;
-            list.tail = tail;
-            return list;
+            DoublyLinkedList singleList = new DoublyLinkedList();
+            singleList.head = list.head;
+            singleList.tail = list.tail;
+            return singleList;
 //            return;
         }
 
 
-        Node middleNode = getMiddleNode(head, tail, numNodes);
-        int middleNodeNumber = getMiddleNodeNumber(numNodes);
+        Node middleNode = getMiddleNode(list.head, list.tail, list.size);
+        int middleNodeNumber = getMiddleNodeNumber(list.size);
 
 
 //        System.out.println("middle node num calc = " + middleNodeNumber);
@@ -104,35 +112,51 @@ public class Hospital3 extends HospitalBase {
 //        System.out.println("NUM OF NODES = " + numNodes);
 //        System.out.println("MID NODE NUMBER = " + middleNodeNumber);
 //        System.out.println("Start node = " + head.getPatient());
-        Node leftListHead = head;
+        Node leftListHead = list.head;
         Node leftListTail = middleNode;
         Node rightListHead = middleNode.next;
-        Node rightListTail = tail;
+        Node rightListTail = list.tail;
 
 //        System.out.println("/////// LEFT ///////");
 //        printList(leftListHead);
 //        System.out.println("/////// RIGHT ///////");
 //        printList(rightListHead);
 
-        System.out.println(numNodes);
-        leftListHead.previous = null;
-        leftListTail.next = null;
-//        System.out.println("rightlist head = " + rightListHead);
-        rightListHead.previous = null;
-        rightListTail.next = null;
+//        System.out.println(list.size);
+//        leftListHead.previous = null;
+//        leftListTail.next = null;
+////        System.out.println("rightlist head = " + rightListHead);
+//        rightListHead.previous = null;
+//        rightListTail.next = null;
 
 
-//
+        DoublyLinkedList rightList = this.appointments.sliceList(middleNode.next, list.tail,
+                list.size - middleNodeNumber);
+        DoublyLinkedList leftList = this.appointments.sliceList(list.head, middleNode,
+                middleNodeNumber);
+
+
 //        System.out.println("/////// LEFT    split ///////");
 //        printList(leftListHead);
 //        System.out.println("/////// RIGHT   split ///////");
 //        printList(rightListHead);
 //        System.out.println("//////////////");
 
-        DoublyLinkedList leftSorted = mergeSort(leftListHead, leftListTail, middleNodeNumber);
+//        DoublyLinkedList leftList = new DoublyLinkedList();
+//        leftList.size = middleNodeNumber;
+//        leftList.head = leftListHead;
+//        leftList.tail = leftListTail;
+
+        DoublyLinkedList leftSorted = mergeSort(leftList);
 //        System.out.println("MIDDLE NODE NUMBER SENT TO MERGESORT = " + middleNodeNumber);
 //        mergeSort(leftListHead, leftListTail, middleNodeNumber);
-        DoublyLinkedList rightSorted = mergeSort(rightListHead, rightListTail, numNodes - middleNodeNumber);
+
+//        DoublyLinkedList rightList = new DoublyLinkedList();
+//        rightList.size = list.size - middleNodeNumber;
+//        rightList.head = rightListHead;
+//        rightList.tail = rightListTail;
+
+        DoublyLinkedList rightSorted = mergeSort(rightList);
 //        mergeSort(rightListHead, rightListTail, numNodes - middleNodeNumber);
         return merge(leftSorted, rightSorted);
     }
@@ -465,6 +489,16 @@ class DoublyLinkedList {
             node.previous = oldTail;
         }
         this.size++;
+    }
+
+    public DoublyLinkedList sliceList(Node startNode, Node endNode, int size) {
+        DoublyLinkedList list = new DoublyLinkedList();
+        list.head = startNode;
+        list.tail = endNode;
+        list.head.previous = null;
+        list.tail.next = null;
+        list.size = size;
+        return list;
     }
 
 //    public void addToTail(Node node) {
