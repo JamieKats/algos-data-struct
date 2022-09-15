@@ -257,6 +257,7 @@ public class Hospital3 extends HospitalBase {
     }
 
 
+    /** TODO see if sorting can be only done when the array is out of order */
     @Override
     public Iterator<PatientBase> iterator() {
         /* Add your code here! */

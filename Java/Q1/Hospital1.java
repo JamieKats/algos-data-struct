@@ -1,4 +1,5 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -73,20 +74,23 @@ public class Hospital1 extends HospitalBase {
                 return false;
             }
 
+            /** TODO test new iterator implementation */
             @Override
             public PatientBase next() {
-//                int i;
-//                int nextVal;
-                for (int i = currentIndex; i < numPossibleTimeSlots; i++) {
-                    if (appointments[i] != null) {
-//                        nextVal = i;
-                        currentIndex = i + 1;
-                        return appointments[i];
-                    }
+                if (!hasNext()) { // if there are no more patients return
+                    throw new NoSuchElementException();
                 }
+                return appointments[currentIndex++];
+//                for (int i = currentIndex; i < numPossibleTimeSlots; i++) {
+//                    if (appointments[i] != null) {
+////                        nextVal = i;
+//                        currentIndex = i + 1;
+//                        return appointments[i];
+//                    }
+//                }
 //                currentIndex = nextVal;
 //                return appointments[i];
-                return null;
+//                return null;
             }
         };
     }
