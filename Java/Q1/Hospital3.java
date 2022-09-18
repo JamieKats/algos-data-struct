@@ -26,207 +26,11 @@ public class Hospital3 extends HospitalBase {
         // create node
         Node newPatientNode = new Node(patient);
 
+        // add node to end of appointments doubly linked list
         this.appointments.addNode(newPatientNode);
         return true;
     }
 
-    public DoublyLinkedList sort(Node head, Node tail, int numNodes) {
-        DoublyLinkedList list1 = new DoublyLinkedList();
-        list1.head = head;
-        list1.tail = tail;
-        list1.size = numNodes;
-        DoublyLinkedList list = mergeSort(list1);
-        this.appointments = list;
-        if (this.appointments.size > 1) {
-            System.out.println("IN SORT ");
-            System.out.println(this.appointments.head.getPatient());
-
-            System.out.println("OUT OF SORT");
-        }
-        System.out.println(this.appointments.size);
-        return list;
-    }
-
-    /** All values between and including leftIndex and rightIndex are used for sorting */
-    public DoublyLinkedList mergeSort(DoublyLinkedList list) {
-        if (list.size == 0) {
-            return new DoublyLinkedList(); // return linked list with no elements
-        }
-
-        if (list.size == 1) {
-//            DoublyLinkedList singleList = new DoublyLinkedList();
-//            singleList.head = list.head;
-//            singleList.tail = list.tail;
-//            return singleList;
-            return list;
-        }
-
-
-        Node middleNode = getMiddleNode(list.head, list.tail, list.size);
-        int middleNodeNumber = getMiddleNodeNumber(list.size);
-
-
-//        System.out.println("middle node num calc = " + middleNodeNumber);
-
-
-
-        // split linked list by making head and tail of both halves point to null
-//        System.out.println("leftlist head = " + head.getPatient());
-//        System.out.println("leftlist tail = " + middleNode.getPatient());
-//        System.out.println("leftlist size = " + (numNodes - middleNodeNumber));
-//        System.out.println("rightlist head = " + middleNode.next.getPatient());
-//        System.out.println("rightlist tail = " + tail.getPatient());
-//        System.out.println("rightlist size = " + middleNodeNumber);
-
-//        System.out.println("NUM OF NODES = " + numNodes);
-//        System.out.println("MID NODE NUMBER = " + middleNodeNumber);
-//        System.out.println("Start node = " + head.getPatient());
-        Node leftListHead = list.head;
-        Node leftListTail = middleNode;
-        Node rightListHead = middleNode.next;
-        Node rightListTail = list.tail;
-
-//        System.out.println("/////// LEFT ///////");
-//        printList(leftListHead);
-//        System.out.println("/////// RIGHT ///////");
-//        printList(rightListHead);
-
-//        System.out.println(list.size);
-//        leftListHead.previous = null;
-//        leftListTail.next = null;
-////        System.out.println("rightlist head = " + rightListHead);
-//        rightListHead.previous = null;
-//        rightListTail.next = null;
-
-
-        DoublyLinkedList rightList = this.appointments.sliceList(middleNode.next, list.tail,
-                list.size - middleNodeNumber);
-        DoublyLinkedList leftList = this.appointments.sliceList(list.head, middleNode,
-                middleNodeNumber);
-
-
-//        System.out.println("/////// LEFT    split ///////");
-//        printList(leftListHead);
-//        System.out.println("/////// RIGHT   split ///////");
-//        printList(rightListHead);
-//        System.out.println("//////////////");
-
-//        DoublyLinkedList leftList = new DoublyLinkedList();
-//        leftList.size = middleNodeNumber;
-//        leftList.head = leftListHead;
-//        leftList.tail = leftListTail;
-
-        DoublyLinkedList leftSorted = mergeSort(leftList);
-//        System.out.println("MIDDLE NODE NUMBER SENT TO MERGESORT = " + middleNodeNumber);
-//        mergeSort(leftListHead, leftListTail, middleNodeNumber);
-
-//        DoublyLinkedList rightList = new DoublyLinkedList();
-//        rightList.size = list.size - middleNodeNumber;
-//        rightList.head = rightListHead;
-//        rightList.tail = rightListTail;
-
-        DoublyLinkedList rightSorted = mergeSort(rightList);
-//        mergeSort(rightListHead, rightListTail, numNodes - middleNodeNumber);
-        return merge(leftSorted, rightSorted);
-    }
-
-    /** left, middle and right index are the indexes of the values that need to be swapped */
-    public DoublyLinkedList merge(DoublyLinkedList leftList, DoublyLinkedList rightList) {
-        Node leftNode = leftList.head;
-        Node rightNode = rightList.head;
-
-        DoublyLinkedList mergedList = new DoublyLinkedList();
-        // setting up the initial node in the list
-//        Node initialNode = new Node(null);
-//        mergedList.head = initialNode;
-//        mergedList.tail = initialNode;
-//        mergedList.size++;
-
-        while (leftNode != null && rightNode != null) {
-            if (leftNode.getPatient().compareTo(rightNode.getPatient()) <= 0) {
-//                mergedList.tail.next = leftNode;
-//                Node oldTail = mergedList.tail;
-//                mergedList.tail = leftNode;
-//                leftNode.previous = oldTail;
-                mergedList.addNode(leftNode);
-
-                leftNode = leftNode.next;
-            } else {
-//                mergedList.tail.next = rightNode;
-//                Node oldTail = mergedList.tail;
-//                mergedList.tail = rightNode;
-//                rightNode.previous = oldTail;
-                mergedList.addNode(rightNode);
-
-                rightNode = rightNode.next;
-            }
-        }
-        while (leftNode != null) { // Copy rest of left array
-//            mergedList.tail.next = leftNode;
-//            Node oldTail = mergedList.tail;
-//            mergedList.tail = leftNode;
-//            leftNode.previous = oldTail;
-            mergedList.addNode(leftNode);
-
-            leftNode = leftNode.next;
-        }
-        while (rightNode != null) { // Copy rest of right array
-//            mergedList.tail.next = rightNode;
-//            Node oldTail = mergedList.tail;
-//            mergedList.tail = rightNode;
-//            rightNode.previous = oldTail;
-            mergedList.addNode(rightNode);
-
-            rightNode = rightNode.next;
-        }
-
-//        mergedList.head = mergedList.head.next;
-//        mergedList.head.previous = null;
-//        mergedList.removeHead(); // clean dummy head off list
-
-        return mergedList;
-    }
-
-    public void printList(Node node) {
-        while (node != null) {
-            System.out.println(node.getPatient());
-            node = node.next;
-        }
-    }
-
-    public Node getMiddleNode(Node head, Node tail, int numNodes) {
-//        System.out.println("in get middle node");
-//        System.out.println(head.getPatient());
-//        System.out.println(numNodes);
-        if (numNodes == 1) {
-            return head;
-        }
-        // calculate the middle node
-        int middleNum = getMiddleNodeNumber(numNodes);
-//        if (numNodes % 2 == 0) {
-//            middleNum = (numNodes - 1) / 2;
-//        } else {
-//            middleNum = numNodes / 2;
-//        }
-
-
-        Node middleNode = head;
-        for (int i = 1; i < middleNum; i++) {
-            middleNode = middleNode.next;
-        }
-        return middleNode;
-    }
-
-    public int getMiddleNodeNumber(int numNodes) {
-        if (numNodes % 2 == 0) {
-            return numNodes / 2;
-        } else {
-            return numNodes / 2;
-        }
-    }
-
-
-    /** TODO see if sorting can be only done when the array is out of order */
     @Override
     public Iterator<PatientBase> iterator() {
         /* Add your code here! */
@@ -234,8 +38,8 @@ public class Hospital3 extends HospitalBase {
 
             boolean isSorted = false;
 
-//            Node currentNode = getHead();
-            DoublyLinkedList list = sort(appointments.head, appointments.tail, appointments.size);
+            DoublyLinkedList list = sort(appointments);
+
             Node currentNode = list.head;
 
             @Override
@@ -273,10 +77,79 @@ public class Hospital3 extends HospitalBase {
     }
 
     /* Add any extra functions below */
+    public DoublyLinkedList sort(DoublyLinkedList list) {
+        DoublyLinkedList sortedList = mergeSort(list);
+        this.appointments = sortedList;
+        return sortedList;
+    }
 
-//    public Node getHead() { return this.head; }
-//
-//    public Node getTail() { return this.tail; }
+    /** All values between and including leftIndex and rightIndex are used for sorting */
+    public DoublyLinkedList mergeSort(DoublyLinkedList list) {
+        // list with one or no elements is already sorted
+        if (list.size == 0 || list.size == 1) {
+            return list;
+        }
+
+        Node middleNode = getMiddleNode(list.head, list.tail, list.size);
+        int middleNodeNumber = getMiddleNodeNumber(list.size);
+
+        DoublyLinkedList rightList = this.appointments.sliceList(middleNode.next, list.tail,
+                list.size - middleNodeNumber);
+        DoublyLinkedList leftList = this.appointments.sliceList(list.head, middleNode,
+                middleNodeNumber);
+
+        DoublyLinkedList leftSorted = mergeSort(leftList);
+        DoublyLinkedList rightSorted = mergeSort(rightList);
+        return merge(leftSorted, rightSorted);
+    }
+
+    /** left, middle and right index are the indexes of the values that need to be swapped */
+    public DoublyLinkedList merge(DoublyLinkedList leftList, DoublyLinkedList rightList) {
+        Node leftNode = leftList.head;
+        Node rightNode = rightList.head;
+        DoublyLinkedList mergedList = new DoublyLinkedList();
+
+        while (leftNode != null && rightNode != null) {
+            if (leftNode.getPatient().compareTo(rightNode.getPatient()) <= 0) {
+                mergedList.addNode(leftNode);
+                leftNode = leftNode.next;
+            } else {
+                mergedList.addNode(rightNode);
+                rightNode = rightNode.next;
+            }
+        }
+        while (leftNode != null) { // Copy rest of left array
+            mergedList.addNode(leftNode);
+            leftNode = leftNode.next;
+        }
+        while (rightNode != null) { // Copy rest of right array
+            mergedList.addNode(rightNode);
+            rightNode = rightNode.next;
+        }
+        return mergedList;
+    }
+
+    public Node getMiddleNode(Node head, Node tail, int numNodes) {
+        if (numNodes == 1) {
+            return head;
+        }
+        // calculate the middle node
+        int middleNum = getMiddleNodeNumber(numNodes);
+
+        Node middleNode = head;
+        for (int i = 1; i < middleNum; i++) {
+            middleNode = middleNode.next;
+        }
+        return middleNode;
+    }
+
+    public int getMiddleNodeNumber(int numNodes) {
+        if (numNodes % 2 == 0) {
+            return numNodes / 2;
+        } else {
+            return numNodes / 2;
+        }
+    }
 
     public static void main(String[] args) {
         /*
@@ -326,74 +199,18 @@ public class Hospital3 extends HospitalBase {
         }
         System.out.println();
 
-        System.out.println("iterating with one patient");
-        for (var patient : hospital) {
-            System.out.println(patient);
-        }
-        System.out.println();
-
         hospital.addPatient(p2);
         hospital.addPatient(p3);
         hospital.addPatient(p4);
         hospital.addPatient(p5);
         hospital.addPatient(p6);
-//        Node newHead = hospital.mergeSort(hospital.head, hospital.tail, hospital.numAppointments);
-//        Node newHead = hospital.sort(hospital.head, hospital.tail, hospital.numAppointments);
-//        System.out.println();
-//        hospital.printList(newHead);
-////        hospital.printList(newHead.previous);
-//        System.out.println(newHead.previous);
-//        System.out.println();
 
-
-//        hospital.addPatient(p7);
-
-//        var hospital1 = new Hospital3();
-//        hospital1.addPatient(p4);
-//        hospital1.addPatient(p5);
-//        hospital1.addPatient(p6);
-//        System.out.println();
-//        hospital1.printList(hospital.merge(hospital.head, hospital1.head));
-//        System.out.println();
-//        hospital.printList(hospital.head);
-//        hospital.mergeSort(hospital.appointments, 0, hospital.numAppointments - 1);
-//        System.out.println("/////RESULT OF MERGESORT/////");
-
-//        System.out.println(hospital.numAppointments);
-//        hospital.merge(hospital.appointments, 0, hospital.numAppointments / 2,
-//                hospital.numAppointments - 1);
-//        for (int i = 0; i < hospital.numAppointments; i++) {
-//            System.out.println(hospital.appointments[i]);
-//        }
-
-        // Test slice function
-//        PatientBase[] test = hospital.slicePatients(hospital.appointments, 4,
-//                hospital.numAppointments);
-//        for (int i = 0; i < test.length; i++) {
-//            System.out.println(test[i]);
-//        }
-
-
-//        var patients = new Patient[] {p1, p2, p3};
-//        var patients = new Patient[] {p2, p3, p1};
-        int i = 0;
-//        for (int j = 0; j <  hospital.appointments.length; j++) {
-//            System.out.println(hospital.appointments[j]);
-//        }
-//        System.out.println("middle patient = " + hospital.getMiddleNode(hospital.getHead(),
-//                hospital.getTail(), hospital.numAppointments).getPatient());
-        System.out.println();
-        System.out.println();
+        System.out.println("iterating over 6 patients");
         for (var patient : hospital) {
-            System.out.println('/');
             System.out.println(patient);
-////            System.out.println();
-//////            assert Objects.equals(patient, patients[i++]);
         }
-        System.out.println("Linked list printed above...");
-//        System.out.println(hospital.head.previous.previous.previous.previous);
-//        System.out.println(hospital.head.previous.previous.previous);
-//        System.out.println(hospital.head.previous.previous);
+        System.out.println();
+
         System.out.println(hospital.appointments.head.previous);
         System.out.println("head = " + hospital.appointments.head.getPatient());
         System.out.println(hospital.appointments.head.next.getPatient());
@@ -402,7 +219,10 @@ public class Hospital3 extends HospitalBase {
         System.out.println(hospital.appointments.head.next.next.next.next.getPatient());
         System.out.println(hospital.appointments.head.next.next.next.next.next.getPatient());
         System.out.println(hospital.appointments.head.next.next.next.next.next.next);
+        System.out.println();
         System.out.println("Num patients = " + hospital.appointments.size);
+        System.out.println("Printing list in reverse order");
+        System.out.println(hospital.appointments.head.next.next.next.next.next.next);
         System.out.println(hospital.appointments.head.next.next.next.next.next.getPatient());
         System.out.println(hospital.appointments.head.next.next.next.next.next.previous.getPatient());
         System.out.println(hospital.appointments.head.next.next.next.next.next.previous.previous.getPatient());
@@ -414,22 +234,49 @@ public class Hospital3 extends HospitalBase {
 
         hospital.addPatient(new Patient("Sam", "08:20"));
         hospital.addPatient(new Patient("Matt", "08:19"));
-//        hospital.addPatient(new Patient("Emily", "08:19"));
-        System.out.println(hospital.appointments.head.previous);
-        System.out.println("head = " + hospital.appointments.head.getPatient());
-        System.out.println(hospital.appointments.head.next.getPatient());
-        System.out.println(hospital.appointments.head.next.next.getPatient());
-        System.out.println(hospital.appointments.head.next.next.next.getPatient());
-        System.out.println(hospital.appointments.head.next.next.next.next.getPatient());
-        System.out.println(hospital.appointments.head.next.next.next.next.next.getPatient());
-        System.out.println(hospital.appointments.head.next.next.next.next.next.next.getPatient());
-        System.out.println(hospital.appointments.head.next.next.next.next.next.next.next);
 
-        System.out.println("Printing list after adding patient");
+//        System.out.println(hospital.appointments.head.previous);
+//        System.out.println("head = " + hospital.appointments.head.getPatient());
+//        System.out.println(hospital.appointments.head.next.getPatient());
+//        System.out.println(hospital.appointments.head.next.next.getPatient());
+//        System.out.println(hospital.appointments.head.next.next.next.getPatient());
+//        System.out.println(hospital.appointments.head.next.next.next.next.getPatient());
+//        System.out.println(hospital.appointments.head.next.next.next.next.next.getPatient());
+//        System.out.println(hospital.appointments.head.next.next.next.next.next.next.getPatient());
+//        System.out.println(hospital.appointments.head.next.next.next.next.next.next.next);
+
+        System.out.println("Iterating over 8 patients");
         System.out.println("SIZE OF APPTS = " + hospital.appointments.size);
         for (var patient : hospital) {
             System.out.println(patient);
         }
+        System.out.println();
+
+        // add some patients at same time as existing
+        hospital.addPatient(new Patient("Harry", "08:19"));
+        hospital.addPatient(new Patient("Matt1", "08:19"));
+        System.out.println(hospital.addPatient(new Patient("Eugene", "13:15")));
+        System.out.println(hospital.addPatient(new Patient("Henry", "08:00")));
+
+        for (var patient : hospital) {
+            System.out.println(patient);
+        }
+        System.out.println();
+
+        // add some patients at invalid times
+        System.out.println(hospital.addPatient(new Patient("Hackerman", "07:59")));
+        System.out.println(hospital.addPatient(new Patient("Hackerman", "11:59")));
+        System.out.println(hospital.addPatient(new Patient("Hackerman", "12:00")));
+        System.out.println(hospital.addPatient(new Patient("Hackerman", "12:59")));
+        System.out.println(hospital.addPatient(new Patient("Hackerman", "13:00")));
+        System.out.println(hospital.addPatient(new Patient("Hackerman", "17:59")));
+        System.out.println(hospital.addPatient(new Patient("Hackerman", "18:00")));
+        System.out.println(hospital.addPatient(new Patient("Hackerman", "18:01")));
+
+        for (var patient : hospital) {
+            System.out.println(patient);
+        }
+        System.out.println();
     }
 }
 
@@ -482,14 +329,6 @@ class DoublyLinkedList {
         list.size = size;
         return list;
     }
-
-//    public void addToTail(Node node) {
-//        this.tail.next = node;
-//        Node oldTail = this.tail;
-//        this.tail = node;
-//        node.previous = oldTail;
-//        this.size++;
-//    }
 
     public void removeHead() {
         this.head = this.head.next;
