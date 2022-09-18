@@ -12,6 +12,8 @@ public class Hospital2 extends HospitalBase {
     private String breakStart = "11:59";
     private String breakEnd = "13:00";
 
+    private int appointmentLength = -1;
+
     private final int initialArraySize = 1;
 
     private int growthMultiplier;

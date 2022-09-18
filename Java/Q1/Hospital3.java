@@ -11,6 +11,8 @@ public class Hospital3 extends HospitalBase {
 
     DoublyLinkedList appointments;
 
+    int appointmentLength = -1; // -1 means appointments can be any length
+
     private String startTime = "08:00";
     private String endTime = "17:59";
     private String breakStart = "11:59";
