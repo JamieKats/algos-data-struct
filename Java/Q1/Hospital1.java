@@ -119,6 +119,12 @@ public class Hospital1 extends HospitalBase {
 //        System.out.println(hospital.appointments[0] == null);
 //        var time = "18:00";
 //        System.out.println(time + "=" + hospital.timeToIndex(time));
+
+        // iterate before adding a patient
+        for (var patient : hospital) {
+            System.out.println(patient);
+        }
+
         var p1 = new Patient("Max", "08:00");
         var p2 = new Patient("Alex", "13:00");
         var p3 = new Patient("George", "17:40");
@@ -134,6 +140,12 @@ public class Hospital1 extends HospitalBase {
 //        hospital.addPatient(p6);
 
         System.out.println(hospital.addPatient(p1));
+        System.out.println("One patient added to hospital");
+        for (var patient : hospital) {
+            System.out.println(patient);
+        }
+        System.out.println();
+
         System.out.println(hospital.addPatient(p2));
         System.out.println(hospital.addPatient(p3));
         System.out.println(hospital.addPatient(p4));
