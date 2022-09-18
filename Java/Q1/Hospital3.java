@@ -3,15 +3,7 @@ import java.util.NoSuchElementException;
 
 public class Hospital3 extends HospitalBase {
 
-//    private Node head;
-//
-//    private Node tail;
-
-//    private int numAppointments;
-
     DoublyLinkedList appointments;
-
-    int appointmentLength = -1; // -1 means appointments can be any length
 
     private String startTime = "08:00";
     private String endTime = "17:59";
@@ -20,10 +12,7 @@ public class Hospital3 extends HospitalBase {
 
     public Hospital3() {
         /* Add your code here! */
-//        this.head = null;
-//        this.tail = null;
         this.appointments = new DoublyLinkedList();
-//        this.numAppointments = appointments.size;
     }
 
     @Override
@@ -38,32 +27,8 @@ public class Hospital3 extends HospitalBase {
         Node newPatientNode = new Node(patient);
 
         this.appointments.addNode(newPatientNode);
-
-//        if (this.appointments.size == 0) { // adding first patientNode
-//            this.appointments.head = newPatientNode;
-//            this.appointments.tail = newPatientNode;
-////            this.head = newPatientNode;
-////            this.tail = newPatientNode;
-//        } else {
-////            this.tail.setNext(newPatientNode);
-//            this.appointments.tail.next = newPatientNode;
-//            Node oldTail = this.appointments.tail;
-//            this.appointments.tail = newPatientNode;
-////            newPatientNode.setPrevious(oldTail);
-//            newPatientNode.previous = oldTail;
-//        }
-//        this.appointments.size++;
-
-
         return true;
     }
-
-//    /** Swap the patients at index i and p */
-//    public void swapPatients(int i, int p, PatientBase[] appointments) {
-//        PatientBase tmp = appointments[i];
-//        appointments[i] = appointments[p];
-//        appointments[p] = tmp;
-//    }
 
     public DoublyLinkedList sort(Node head, Node tail, int numNodes) {
         DoublyLinkedList list1 = new DoublyLinkedList();
@@ -71,27 +36,29 @@ public class Hospital3 extends HospitalBase {
         list1.tail = tail;
         list1.size = numNodes;
         DoublyLinkedList list = mergeSort(list1);
-//        node.previous = null;
         this.appointments = list;
+        if (this.appointments.size > 1) {
+            System.out.println("IN SORT ");
+            System.out.println(this.appointments.head.getPatient());
+
+            System.out.println("OUT OF SORT");
+        }
+        System.out.println(this.appointments.size);
         return list;
     }
 
-//    public void splitList() {
-//
-//    }
-
     /** All values between and including leftIndex and rightIndex are used for sorting */
     public DoublyLinkedList mergeSort(DoublyLinkedList list) {
-//        System.out.println("merge sort hit");
-//        System.out.println("numnodes = " + numNodes);
-//        System.out.println(head.next);
+        if (list.size == 0) {
+            return new DoublyLinkedList(); // return linked list with no elements
+        }
+
         if (list.size == 1) {
-//            System.out.println(head.getPatient());
-            DoublyLinkedList singleList = new DoublyLinkedList();
-            singleList.head = list.head;
-            singleList.tail = list.tail;
-            return singleList;
-//            return;
+//            DoublyLinkedList singleList = new DoublyLinkedList();
+//            singleList.head = list.head;
+//            singleList.tail = list.tail;
+//            return singleList;
+            return list;
         }
 
 
@@ -245,7 +212,7 @@ public class Hospital3 extends HospitalBase {
 
         Node middleNode = head;
         for (int i = 1; i < middleNum; i++) {
-            middleNode = middleNode.getNext();
+            middleNode = middleNode.next;
         }
         return middleNode;
     }
@@ -295,10 +262,11 @@ public class Hospital3 extends HospitalBase {
             @Override
             public PatientBase next() {
                 if (!this.hasNext()) {
+                    System.out.println(currentNode.patient);
                     throw new NoSuchElementException();
                 }
                 Node nextNode = this.currentNode;
-                this.currentNode = this.currentNode.getNext();
+                this.currentNode = this.currentNode.next;
                 return nextNode.getPatient();
             }
         };
@@ -344,7 +312,26 @@ public class Hospital3 extends HospitalBase {
 //        var p5 = new Patient("Jamie", "14:00");
 //        var p6 = new Patient("Bort", "14:20");
 
+        // iterate before adding a patient
+        System.out.println("iterating with no patients");
+        for (var patient : hospital) {
+            System.out.println(patient);
+        }
+        System.out.println();
+
         hospital.addPatient(p1);
+        System.out.println("iterating with one patient");
+        for (var patient : hospital) {
+            System.out.println(patient);
+        }
+        System.out.println();
+
+        System.out.println("iterating with one patient");
+        for (var patient : hospital) {
+            System.out.println(patient);
+        }
+        System.out.println();
+
         hospital.addPatient(p2);
         hospital.addPatient(p3);
         hospital.addPatient(p4);
@@ -458,14 +445,6 @@ class Node {
     }
 
     public PatientBase getPatient() { return patient; }
-
-    public Node getPrevious() { return previous; }
-
-    public Node getNext() { return next; }
-
-    public void setPrevious(Node node) { this.previous = node; }
-
-    public void setNext(Node node) { this.next = node; }
 }
 
 class DoublyLinkedList {
