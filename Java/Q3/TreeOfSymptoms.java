@@ -57,13 +57,10 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 		symptoms.add(symptom);
 	}
 
-	/** Restructure by tri node restructuring
-	 * 1. FInd the node with severity >= the severity given
-	 * 2. use tri node restructuing to move this node to the top??*/
 	@Override
 	public void restructureTree(int severity) {
 		/* Add your code here! */
-		// in order traversal to get all nodes in tree
+		// in order traversal to get all nodes in given tree
 		ArrayList<SymptomBase> symptoms = inOrderTraversal();
 
 		// sort arraylist
@@ -105,6 +102,8 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 	public void BSTCreator(ArrayList<SymptomBase> symptoms, int rootIndex) {
 		// set root
 		this.setRoot(symptoms.get(rootIndex));
+		this.getRoot().setLeft(null);
+		this.getRoot().setRight(null);
 		System.out.println("new root set at " + rootIndex + " " + symptoms.get(rootIndex));
 //		System.out.println(symptoms.size() - 1);
 //		System.out.println(this.getRoot());
@@ -113,7 +112,7 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 
 	public void BSTCreatorRecurse(ArrayList<SymptomBase> symptoms, int left, int middle,
 								  int right) {
-//		System.out.println("left: " + left + " middle " + middle + " right " + right);
+		System.out.println("left: " + left + " middle " + middle + " right " + right);
 		if (left >= middle && middle >= right) { // base case
 			symptoms.get(middle).setLeft(null);
 			symptoms.get(middle).setRight(null);
@@ -122,7 +121,7 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 		}
 
 		if (left != middle) {
-			if (right - left == 1) {
+			if (right - left == 1) { // only two nodes remaining
 				symptoms.get(middle).setLeft(symptoms.get(left));
 				symptoms.get(middle).setRight(null);
 				BSTCreatorRecurse(symptoms, left, left, left);
@@ -130,11 +129,14 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 
 			// get index of left child
 			int leftChild = left + (middle - left) / 2;
+
+			// set the left child of current middle node and recursively construct tree for left
+			// child
 			symptoms.get(middle).setLeft(symptoms.get(leftChild));
 			BSTCreatorRecurse(symptoms, left, leftChild, (middle - 1));
 		}
 		if (middle != right) {
-			if (right - left == 1) {
+			if (right - left == 1) { // only two nodes remaining
 				symptoms.get(middle).setRight(symptoms.get(right));
 				symptoms.get(middle).setLeft(null);
 				BSTCreatorRecurse(symptoms, right, right, right);
@@ -142,10 +144,10 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 
 			// get index of right child
 			int rightChild = middle + (int)Math.ceil(((double)right - (double)middle) / 2);
+
+			// set the right child of current middle node and recursively construct tree for right
+			// child
 			symptoms.get(middle).setRight(symptoms.get(rightChild));
-//			System.out.println("middle " + (middle + 1));
-//			System.out.println("rightChild " + rightChild);
-//			System.out.println("right " + right);
 			BSTCreatorRecurse(symptoms, (middle + 1), rightChild, right);
 		}
 	}
@@ -158,27 +160,27 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 		 * The following main method is provided for simple debugging only
 		 */
 		var cough = new Symptom("Cough", 3);
-		var fever = new Symptom("Fever", 6);
+//		var fever = new Symptom("Fever", 6);
 		var redEyes = new Symptom("Red Eyes", 1);
 
 		redEyes.setLeft(cough);
-		redEyes.setRight(fever);
+//		redEyes.setRight(fever);
 
 		// coughs children
-		var sneeze = new Symptom("Sneeze", 7);
-		var red = new Symptom("red", 10);
-		cough.setLeft(sneeze);
-		cough.setRight(red);
+//		var sneeze = new Symptom("Sneeze", 7);
+//		var red = new Symptom("red", 10);
+//		cough.setLeft(sneeze);
+//		cough.setRight(red);
 
 		var tree = new TreeOfSymptoms(redEyes);
 		var inOrderTraversal = tree.inOrderTraversal();
 //		var correctTraversal = new Symptom[] { cough, redEyes, fever };
-		var correctTraversal = new Symptom[] { sneeze, cough, red, redEyes, fever };
-		int i = 0;
-		for (var patient : inOrderTraversal) {
-			assert Objects.equals(patient, correctTraversal[i++]);
-		}
-		assert tree.getRoot() == redEyes;
+//		var correctTraversal = new Symptom[] { cough, redEyes };
+//		int i = 0;
+//		for (var patient : inOrderTraversal) {
+//			assert Objects.equals(patient, correctTraversal[i++]);
+//		}
+//		assert tree.getRoot() == redEyes;
 
 		// test binary search
 //		ArrayList<SymptomBase> orderedTrversal = new ArrayList<>() {
@@ -196,30 +198,51 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 //		System.out.println("index of = " + tree.binarySearch(orderedTrversal, 0,
 //				orderedTrversal.size() - 1, 0));
 //
-//		// test post order traversal
+		// test post order traversal
 //		var postOrderTraversal = tree.postOrderTraversal();
-//		correctTraversal = new Symptom[] { sneeze, red, cough, fever, redEyes };
+//		correctTraversal = new Symptom[] { cough, redEyes };
 //		i = 0;
 //		for (var patient : postOrderTraversal) {
 //			assert Objects.equals(patient, correctTraversal[i++]);
 //		}
 
-		tree.restructureTree(6);
+		tree.restructureTree(2);
+//		System.out.println("CHECKING TREE AFTER RESTRUCTURE");
 //		System.out.println(tree.getRoot());
 //		System.out.println(tree.getRoot().getLeft());
 //		System.out.println(tree.getRoot().getRight());
 //		System.out.println(tree.getRoot().getRight().getLeft());
+//		System.out.println(tree.getRoot().getRight().getLeft().getLeft());
+//		System.out.println(tree.getRoot().getRight().getLeft().getRight());
 //		System.out.println(tree.getRoot().getRight().getRight());
+//		System.out.println(tree.getRoot().getRight().getRight().getLeft());
+//		System.out.println(tree.getRoot().getRight().getRight().getRight());
+//		System.out.println();
 
 		inOrderTraversal = tree.inOrderTraversal();
-		correctTraversal = new Symptom[] { redEyes, cough, fever};
-		correctTraversal = new Symptom[] { redEyes, cough, fever, red, sneeze };
-		i = 0;
+//		correctTraversal = new Symptom[] { redEyes, cough, fever};
+		var correctTraversal = new Symptom[] { redEyes, cough };
+		int i = 0;
 		for (var patient : inOrderTraversal) {
-//			assert Objects.equals(patient, correctTraversal[i++]);
 			System.out.println(patient);
+			assert Objects.equals(patient, correctTraversal[i++]);
+//			System.out.println(patient);
 		}
-		assert tree.getRoot() == fever;
+
+		// test post order on restructured tree
+		var postOrderTraversal = tree.postOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough };
+		i = 0;
+		System.out.println();
+//		for (var patient : postOrderTraversal) {
+//			System.out.println(patient);
+//		}
+		for (var patient : postOrderTraversal) {
+//			System.out.println(patient);
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		assert tree.getRoot() == cough;
 		System.out.println("TOP OF TREE");
 		System.out.println(tree.getRoot());
 		System.out.println(tree.getRoot().getLeft());
