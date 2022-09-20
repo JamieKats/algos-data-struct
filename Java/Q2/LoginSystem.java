@@ -1,6 +1,4 @@
-import jdk.jshell.spi.ExecutionControl;
 
-import java.util.function.Function;
 
 public class LoginSystem extends LoginSystemBase {
 
@@ -65,25 +63,12 @@ public class LoginSystem extends LoginSystemBase {
         return (this.hashTable.length * this.loadFactor <= this.getNumUsers());
     }
 
-    /** TODO pass function callback into linearprobe that will handle what to do if you find the
-     * user already in the hashtable e.g. removeuser, addUser, changePassword will all do
-     * linearprobing but will have different functionality
-     *
-     * Can linear probe and return the index of the next available slot or DEL
-     *
-     * if linear probing for a key you either find
-     * 1. they key already in the hashtable: return -1
-     * 2. an empty slot or a DEL slot: return the index
-     *
-     * The number of values will always be > load factor * size of table
-     * */
     public int linearProbe(UserInfo user) {
         int emailHash = this.hashCode(user.getEmail());
         int emailIndex = emailHash % hashTable.length;
 
         int deletedUserIndex = -1; // used to keep track of the first sentiel values passed
         for (int i = 0; i < this.hashTable.length; i++) {
-            System.out.println("probing....");
             int probeLocation = (i + emailIndex) % this.hashTable.length;
             UserInfo probedUser = this.hashTable[probeLocation];
 
@@ -221,14 +206,12 @@ public class LoginSystem extends LoginSystemBase {
             UserInfo probedUser = this.hashTable[probeLocation];
 
             if (probedUser == null) { // user could not be found
-                System.out.println("changePassword: User not found");
                 break;
             }
 
             // If user in system and old password == password in system
             if (probedUser.equals(oldUser)) {
                 // change password
-                System.out.println("Changing passwords");
                 this.hashTable[probeLocation].setPasswordHash(this.hashCode(newPassword));
                 return true;
             } else if (probedUser.sameUserWrongPassword(oldUser)) { // old password incorrect
@@ -403,9 +386,6 @@ public class LoginSystem extends LoginSystemBase {
 }
 
 class UserInfo {
-
-    /** Plaintext email stored for user otherwise if only a hashed email was stored you could end
-     * up with users with the same email hash and password hash */
     private String email;
 
     /** Password hash stored for user */

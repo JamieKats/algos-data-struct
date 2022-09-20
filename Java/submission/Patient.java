@@ -27,9 +27,8 @@ public class Patient extends PatientBase {
     /** Returns true if the given time is within the hospital start and end times and doesnt fall */
     static boolean validTime(String startTime, String endTime, String breakStart,
                              String breakEnd, String time) {
-
         if ((compareTimes(time, startTime) >= 0 && compareTimes(time, endTime) <= 0)
-                && !(compareTimes(time, breakStart) >= 0 && compareTimes(time, breakEnd) < 0)) {
+                && !(compareTimes(time, breakStart) > 0 && compareTimes(time, breakEnd) < 0)) {
             return true;
         }
         return false;

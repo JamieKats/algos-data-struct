@@ -1,5 +1,4 @@
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class Hospital2 extends HospitalBase {
 
@@ -90,9 +89,6 @@ public class Hospital2 extends HospitalBase {
 
             @Override
             public PatientBase next() {
-                if (!this.hasNext()) {
-                    throw new NoSuchElementException();
-                }
                 return appointmentSlots[currIndex++];
             }
         };

@@ -69,10 +69,6 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 		// binary search on array list to find severity level
 		int newRoot = binarySearch(symptoms, 0, symptoms.size() - 1, severity);
 
-		for (var i : symptoms) {
-			System.out.println(i);
-		}
-		System.out.println("new root at " + newRoot);
 		// construct new tree
 		BSTCreator(symptoms, newRoot);
 	}
@@ -104,9 +100,6 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 		this.setRoot(symptoms.get(rootIndex));
 		this.getRoot().setLeft(null);
 		this.getRoot().setRight(null);
-		System.out.println("new root set at " + rootIndex + " " + symptoms.get(rootIndex));
-//		System.out.println(symptoms.size() - 1);
-//		System.out.println(this.getRoot());
 		BSTCreatorRecurse(symptoms, 0, rootIndex, symptoms.size() - 1);
 	}
 
@@ -116,7 +109,6 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 		if (left >= middle && middle >= right) { // base case
 			symptoms.get(middle).setLeft(null);
 			symptoms.get(middle).setRight(null);
-//			System.out.println("BASE CASE HIT");
 			return;
 		}
 

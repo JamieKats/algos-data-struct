@@ -1,5 +1,4 @@
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class Hospital3 extends HospitalBase {
 
@@ -35,28 +34,12 @@ public class Hospital3 extends HospitalBase {
     public Iterator<PatientBase> iterator() {
         /* Add your code here! */
         return new Iterator<PatientBase>() {
-
-            boolean isSorted = false;
-
             DoublyLinkedList list = sort(appointments);
 
             Node currentNode = list.head;
 
             @Override
             public boolean hasNext() {
-//                if (!isSorted) {
-////                    System.out.println();
-////                    System.out.println();
-////                    System.out.println(getHead().getPatient());
-////                    System.out.println(getTail().getPatient());
-////                    System.out.println(numAppointments);
-////                    System.out.println();
-////                    System.out.println();
-////                    head = mergeSort(getHead(), getTail(), numAppointments);
-//                    head = sort(getHead(), getTail(), numAppointments);
-//                    isSorted = true;
-//                }
-
                 if (this.currentNode != null) {
                     return true;
                 }
@@ -65,10 +48,6 @@ public class Hospital3 extends HospitalBase {
 
             @Override
             public PatientBase next() {
-                if (!this.hasNext()) {
-                    System.out.println(currentNode.patient);
-                    throw new NoSuchElementException();
-                }
                 Node nextNode = this.currentNode;
                 this.currentNode = this.currentNode.next;
                 return nextNode.getPatient();
@@ -328,11 +307,5 @@ class DoublyLinkedList {
         list.tail.next = null;
         list.size = size;
         return list;
-    }
-
-    public void removeHead() {
-        this.head = this.head.next;
-        this.head.previous = null;
-        this.size--;
     }
 }
