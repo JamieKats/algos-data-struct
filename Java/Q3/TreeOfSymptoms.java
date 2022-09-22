@@ -235,17 +235,190 @@ public class TreeOfSymptoms extends TreeOfSymptomsBase {
 		}
 
 		assert tree.getRoot() == cough;
-		System.out.println("TOP OF TREE");
-		System.out.println(tree.getRoot());
-		System.out.println(tree.getRoot().getLeft());
-		System.out.println(tree.getRoot().getLeft().getLeft());
-		System.out.println(tree.getRoot().getLeft().getLeft().getLeft());
-		System.out.println(tree.getRoot().getLeft().getLeft().getRight());
-		System.out.println(tree.getRoot().getLeft().getRight());
-		System.out.println(tree.getRoot().getRight());
-		System.out.println(tree.getRoot().getRight().getLeft());
-		System.out.println(tree.getRoot().getRight().getRight());
-		System.out.println(tree.getRoot().getRight().getRight().getLeft());
-		System.out.println(tree.getRoot().getRight().getRight().getRight());
+//		System.out.println("TOP OF TREE");
+//		System.out.println(tree.getRoot());
+//		System.out.println(tree.getRoot().getLeft());
+//		System.out.println(tree.getRoot().getLeft().getLeft());
+//		System.out.println(tree.getRoot().getLeft().getLeft().getLeft());
+//		System.out.println(tree.getRoot().getLeft().getLeft().getRight());
+//		System.out.println(tree.getRoot().getLeft().getRight());
+//		System.out.println(tree.getRoot().getRight());
+//		System.out.println(tree.getRoot().getRight().getLeft());
+//		System.out.println(tree.getRoot().getRight().getRight());
+//		System.out.println(tree.getRoot().getRight().getRight().getLeft());
+//		System.out.println(tree.getRoot().getRight().getRight().getRight());
+
+		// check two other side
+		cough = new Symptom("Cough", 3);
+//		var fever = new Symptom("Fever", 6);
+		redEyes = new Symptom("Red Eyes", 1);
+
+		redEyes.setRight(cough);
+//		redEyes.setRight(fever);
+		tree = new TreeOfSymptoms(redEyes);
+		tree.restructureTree(4);
+		assert tree.getRoot() == cough;
+
+		inOrderTraversal = tree.inOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough };
+		i = 0;
+		for (var patient : inOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+
+		postOrderTraversal = tree.postOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough };
+		i = 0;
+		for (var patient : postOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		// CHECK SINGLE NODE
+		cough = new Symptom("Cough", 3);
+
+		tree = new TreeOfSymptoms(cough);
+		tree.restructureTree(4);
+		assert tree.getRoot() == cough;
+
+		inOrderTraversal = tree.inOrderTraversal();
+		correctTraversal = new Symptom[] { cough };
+		i = 0;
+		for (var patient : inOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		postOrderTraversal = tree.postOrderTraversal();
+		correctTraversal = new Symptom[] { cough };
+		i = 0;
+		for (var patient : postOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		// CHECK 5 node root is middle {1 3 6 7 10} root = 6
+		cough = new Symptom("Cough", 3);
+		var fever = new Symptom("Fever", 6);
+		redEyes = new Symptom("Red Eyes", 1);
+
+		redEyes.setLeft(cough);
+		redEyes.setRight(fever);
+
+		// coughs children
+		var sneeze = new Symptom("Sneeze", 7);
+		var red = new Symptom("red", 10);
+
+		cough.setRight(sneeze);
+		cough.setLeft(red);
+
+		tree = new TreeOfSymptoms(redEyes);
+		tree.restructureTree(4);
+		assert tree.getRoot() == fever;
+
+		inOrderTraversal = tree.inOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough, fever, sneeze, red };
+		i = 0;
+		for (var patient : inOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		postOrderTraversal = tree.postOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough, red, sneeze, fever };
+		i = 0;
+		for (var patient : postOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		// CHECK 4 node root is middle {1 3 6 7} root = 6
+		cough = new Symptom("Cough", 3);
+		fever = new Symptom("Fever", 6);
+		redEyes = new Symptom("Red Eyes", 1);
+
+		redEyes.setLeft(cough);
+		redEyes.setRight(fever);
+
+		// coughs children
+		sneeze = new Symptom("Sneeze", 7);
+
+		cough.setRight(sneeze);
+
+		tree = new TreeOfSymptoms(redEyes);
+		tree.restructureTree(4);
+		assert tree.getRoot() == fever;
+
+		inOrderTraversal = tree.inOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough, fever, sneeze };
+		i = 0;
+		for (var patient : inOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		postOrderTraversal = tree.postOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough, sneeze, fever };
+		i = 0;
+		for (var patient : postOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		// CHECK ALL VALUES ARE ON ONE SIDE {1 3 6 7} root = 1
+		cough = new Symptom("Cough", 3);
+		fever = new Symptom("Fever", 6);
+		redEyes = new Symptom("Red Eyes", 1);
+
+		redEyes.setLeft(cough);
+		redEyes.setRight(fever);
+
+		// coughs children
+		sneeze = new Symptom("Sneeze", 7);
+
+		cough.setRight(sneeze);
+
+		tree = new TreeOfSymptoms(redEyes);
+		tree.restructureTree(1);
+		assert tree.getRoot() == redEyes;
+
+		inOrderTraversal = tree.inOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough, fever, sneeze };
+		i = 0;
+		for (var patient : inOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		postOrderTraversal = tree.postOrderTraversal();
+		correctTraversal = new Symptom[] { cough, sneeze, fever, redEyes };
+		i = 0;
+		for (var patient : postOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		// CHECK ALL VALUES ARE ON ONE SIDE {1 3 6 7} root = 7
+		cough = new Symptom("Cough", 3);
+		fever = new Symptom("Fever", 6);
+		redEyes = new Symptom("Red Eyes", 1);
+
+		redEyes.setLeft(cough);
+		redEyes.setRight(fever);
+
+		// coughs children
+		sneeze = new Symptom("Sneeze", 7);
+
+		cough.setRight(sneeze);
+
+		tree = new TreeOfSymptoms(redEyes);
+		tree.restructureTree(7);
+		assert tree.getRoot() == sneeze;
+
+		inOrderTraversal = tree.inOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, cough, fever, sneeze };
+		i = 0;
+		for (var patient : inOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
+
+		postOrderTraversal = tree.postOrderTraversal();
+		correctTraversal = new Symptom[] { redEyes, fever, cough, sneeze };
+		i = 0;
+		for (var patient : postOrderTraversal) {
+			assert Objects.equals(patient, correctTraversal[i++]);
+		}
 	}
 }
